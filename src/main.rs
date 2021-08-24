@@ -6,12 +6,24 @@ use nom::{
     character::complete::{alpha0, alpha1},
     combinator::map_res,
     multi::many0,
-    sequence::delimited,
+    sequence::{delimited, tuple},
     IResult,
 };
 
 fn main() {
     println!("Hello, world!");
+}
+
+#[derive(Debug)]
+enum Value {
+    String,
+    Number,
+}
+
+#[derive(Debug)]
+struct KeyValue {
+    key: String,
+    value: Value,
 }
 
 #[derive(Debug)]
@@ -24,6 +36,7 @@ struct Label(String);
 struct Node {
     variable: Option<Variable>,
     labels: Vec<Label>,
+    values: Vec<Value>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -133,18 +146,41 @@ fn line(input: &str) -> IResult<&str, Line> {
 }
 
 fn node(input: &str) -> IResult<&str, Node> {
-    let (_, input) = delimited(tag("("), is_not(")"), tag(")"))(input)?;
+    let f = |input| {
+        let (_, input) = delimited(tag("("), is_not(")"), tag(")"))(input)?;
 
-    let (input, variable) = alpha0(input)?;
-    let (input, labels) = many0(label)(input)?;
+        let (input, variable) = alpha0(input)?;
+        let (input, labels) = many0(label)(input)?;
 
-    let variable = if variable.len() == 0 {
-        None
-    } else {
-        Some(Variable(variable.to_string()))
+        let variable = if variable.len() == 0 {
+            None
+        } else {
+            Some(Variable(variable.to_string()))
+        };
+
+        Ok((
+            input,
+            Node {
+                variable,
+                labels,
+                values: vec![],
+            },
+        ))
     };
 
-    Ok((input, Node { variable, labels }))
+    let f1 = |input| {
+        let (input, _) = tuple((tag("("), tag(")")))(input)?;
+        Ok((
+            input,
+            Node {
+                variable: None,
+                labels: vec![],
+                values: vec![],
+            },
+        ))
+    };
+
+    alt((f, f1))(input)
 }
 
 #[cfg(test)]
@@ -183,6 +219,10 @@ mod tests {
 
     #[test]
     fn nom_node() {
+        let node_str = "()";
+        let node = super::node(node_str);
+        println!("node: {:?}", node);
+
         let node_str = "(n:Node)";
         let node = super::node(node_str);
         println!("node: {:?}", node);
