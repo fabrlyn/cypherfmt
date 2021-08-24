@@ -120,18 +120,33 @@ fn label(input: &str) -> IResult<&str, Label> {
 }
 
 fn relationship(input: &str) -> IResult<&str, Relationship> {
-    let (_, input) = delimited(tag("["), is_not("]"), tag("]"))(input)?;
+    let f = |input| {
+        let (_, input) = delimited(tag("["), is_not("]"), tag("]"))(input)?;
 
-    let (input, variable) = alpha0(input)?;
-    let (input, labels) = many0(label)(input)?;
+        let (input, variable) = alpha0(input)?;
+        let (input, labels) = many0(label)(input)?;
 
-    let variable = if variable.len() == 0 {
-        None
-    } else {
-        Some(Variable(variable.to_string()))
+        let variable = if variable.len() == 0 {
+            None
+        } else {
+            Some(Variable(variable.to_string()))
+        };
+
+        Ok((input, Relationship { variable, labels }))
     };
 
-    Ok((input, Relationship { variable, labels }))
+    let f1 = |input| {
+        let (input, _) = tuple((tag("["), tag("]")))(input)?;
+        Ok((
+            input,
+            Relationship {
+                variable: None,
+                labels: vec![],
+            },
+        ))
+    };
+
+    alt((f, f1))(input)
 }
 
 fn from_line(input: &str) -> Result<Line, Box<dyn Error>> {
@@ -242,6 +257,10 @@ mod tests {
 
     #[test]
     fn nom_relationship() {
+        let rel_str = "[]";
+        let rel = super::relationship(rel_str);
+        println!("relationship: {:?}", rel);
+
         let rel_str = "[r]";
         let rel = super::relationship(rel_str);
         println!("relationship: {:?}", rel);
