@@ -2,8 +2,11 @@ use std::error::Error;
 
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take_until},
+    bytes::complete::{is_not, tag, take_until},
+    character::complete::{alpha0, alpha1},
     combinator::map_res,
+    multi::many0,
+    sequence::delimited,
     IResult,
 };
 
@@ -20,7 +23,7 @@ struct Label(String);
 #[derive(Debug)]
 struct Node {
     variable: Option<Variable>,
-    label: Option<Label>,
+    label: Vec<Label>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -36,7 +39,7 @@ enum Line {
 #[derive(Debug)]
 struct Relationship {
     variable: Option<Variable>,
-    label: Option<Label>,
+    labels: Vec<Label>,
 }
 
 #[derive(Debug)]
@@ -97,20 +100,25 @@ fn path_pattern(input: &str) -> IResult<&str, PathPattern> {
     Ok((input, PathPattern { pattern }))
 }
 
-fn relationship(input: &str) -> IResult<&str, Relationship> {
-    let (input, _) = tag("[")(input)?;
-    let (input, variable) = take_until(":")(input)?;
+fn label(input: &str) -> IResult<&str, Label> {
     let (input, _) = tag(":")(input)?;
-    let (input, label) = take_until("]")(input)?;
+    let (input, label) = alpha1(input)?;
+    Ok((input, Label(label.to_string())))
+}
 
-    let (input, _) = tag("]")(input)?;
-    Ok((
-        input,
-        Relationship {
-            variable: Some(Variable(variable.to_string())),
-            label: Some(Label(label.to_string())),
-        },
-    ))
+fn relationship(input: &str) -> IResult<&str, Relationship> {
+    let (_, input) = delimited(tag("["), is_not("]"), tag("]"))(input)?;
+
+    let (input, variable) = alpha0(input)?;
+    let (input, labels) = many0(label)(input)?;
+
+    let variable = if variable.len() == 0 {
+        None
+    } else {
+        Some(Variable(variable.to_string()))
+    };
+
+    Ok((input, Relationship { variable, labels }))
 }
 
 fn from_line(input: &str) -> Result<Line, Box<dyn Error>> {
@@ -135,7 +143,7 @@ fn node(input: &str) -> IResult<&str, Node> {
         input,
         Node {
             variable: Some(Variable(variable.to_string())),
-            label: Some(Label(label.to_string())),
+            label: vec![Label(label.to_string())],
         },
     ))
 }
@@ -179,11 +187,27 @@ mod tests {
         let node_str = "(n:Node)";
         let node = super::node(node_str);
         println!("node: {:?}", node);
+
+        let node_str = "(n:Node:Another)";
+        let node = super::node(node_str);
+        println!("node: {:?}", node);
     }
 
     #[test]
     fn nom_relationship() {
         let rel_str = "[r:Relationship]";
+        let rel = super::relationship(rel_str);
+        println!("relationship: {:?}", rel);
+
+        let rel_str = "[:Relationship]";
+        let rel = super::relationship(rel_str);
+        println!("relationship: {:?}", rel);
+
+        let rel_str = "[:Relationship:SomeOther]";
+        let rel = super::relationship(rel_str);
+        println!("relationship: {:?}", rel);
+
+        let rel_str = "[r:Relationship:SomeOther]";
         let rel = super::relationship(rel_str);
         println!("relationship: {:?}", rel);
     }
