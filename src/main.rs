@@ -23,7 +23,7 @@ struct Label(String);
 #[derive(Debug)]
 struct Node {
     variable: Option<Variable>,
-    label: Vec<Label>,
+    labels: Vec<Label>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -133,19 +133,18 @@ fn line(input: &str) -> IResult<&str, Line> {
 }
 
 fn node(input: &str) -> IResult<&str, Node> {
-    let (input, _) = tag("(")(input)?;
-    let (input, variable) = take_until(":")(input)?;
-    let (input, _) = tag(":")(input)?;
-    let (input, label) = take_until(")")(input)?;
-    let (input, _) = tag(")")(input)?;
+    let (_, input) = delimited(tag("("), is_not(")"), tag(")"))(input)?;
 
-    Ok((
-        input,
-        Node {
-            variable: Some(Variable(variable.to_string())),
-            label: vec![Label(label.to_string())],
-        },
-    ))
+    let (input, variable) = alpha0(input)?;
+    let (input, labels) = many0(label)(input)?;
+
+    let variable = if variable.len() == 0 {
+        None
+    } else {
+        Some(Variable(variable.to_string()))
+    };
+
+    Ok((input, Node { variable, labels }))
 }
 
 #[cfg(test)]
@@ -191,10 +190,22 @@ mod tests {
         let node_str = "(n:Node:Another)";
         let node = super::node(node_str);
         println!("node: {:?}", node);
+
+        let node_str = "(:Node:Another)";
+        let node = super::node(node_str);
+        println!("node: {:?}", node);
+
+        let node_str = "(n)";
+        let node = super::node(node_str);
+        println!("node: {:?}", node);
     }
 
     #[test]
     fn nom_relationship() {
+        let rel_str = "[r]";
+        let rel = super::relationship(rel_str);
+        println!("relationship: {:?}", rel);
+
         let rel_str = "[r:Relationship]";
         let rel = super::relationship(rel_str);
         println!("relationship: {:?}", rel);
