@@ -2,11 +2,11 @@ use std::error::Error;
 
 use nom::{
     branch::alt,
-    bytes::complete::{is_not, tag, take_until},
-    character::complete::{alpha0, alpha1},
-    combinator::map_res,
+    bytes::complete::{escaped, is_not, tag, tag_no_case, take_until},
+    character::complete::{alpha0, alpha1, anychar, none_of, one_of},
+    combinator::{map_res, not},
     multi::many0,
-    sequence::{delimited, tuple},
+    sequence::{delimited, preceded, tuple},
     IResult,
 };
 
@@ -16,8 +16,9 @@ fn main() {
 
 #[derive(Debug)]
 enum Value {
-    String,
-    Number,
+    String(String),
+    Number(String),
+    Bool(String),
 }
 
 #[derive(Debug)]
@@ -81,6 +82,30 @@ enum Clause {
 }
 
 struct Query {}
+
+fn from_value_bool(input: &str) -> Result<Value, Box<dyn Error>> {
+    match input.to_lowercase().as_ref() {
+        "false" | "true" => Ok(Value::Bool(input.to_string())),
+        _ => Err("Not a bool value".into()),
+    }
+}
+
+fn double_qoute(input: &str) -> IResult<&str, &str> {
+    tag("\"")(input)
+}
+
+fn empty_string(input: &str) -> IResult<&str, &str> {
+    Ok((tuple((double_qoute, double_qoute))(input)?.0, ""))
+}
+
+
+fn value_string(input: &str) -> IResult<&str, &str> {
+    delimited(tag("\""), escaped(is_not("\\\""), '\\', one_of(r#"""#)), tag("\""))(input)
+}
+
+fn value_bool(input: &str) -> IResult<&str, &str> {
+    alt((tag_no_case("true"), tag_no_case("false")))(input)
+}
 
 fn from_keyword(input: &str) -> Result<Clause, String> {
     match input.to_lowercase() {
@@ -294,5 +319,26 @@ mod tests {
         let pattern_str = "(n:Node)-[r:Relationship]";
         let path_pattern = super::path_pattern(pattern_str);
         println!("path_pattern: {:?}", path_pattern);
+    }
+
+    #[test]
+    fn nom_value_string() {
+        let input = r#""a\"bc . a 123%!@# ""#;
+        println!("{}", input);
+        let result = super::value_string(input).unwrap();
+        println!("result: {:?}", result);
+
+        /*
+        let input = "\"abc\"";
+        let result = super::value_string(input).unwrap();
+        println!("result: {:?}", result);
+        */
+
+        /*
+        let input = "\"a\\\"bc\"";
+        println!("{}", input);
+        let result = super::value_string(input).unwrap();
+        println!("result: {}, {}", result.0, result.1);
+        */
     }
 }
