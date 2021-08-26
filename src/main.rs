@@ -98,9 +98,12 @@ fn empty_string(input: &str) -> IResult<&str, &str> {
     Ok((tuple((double_qoute, double_qoute))(input)?.0, ""))
 }
 
-
 fn value_string(input: &str) -> IResult<&str, &str> {
-    delimited(tag("\""), escaped(is_not("\\\""), '\\', one_of(r#"""#)), tag("\""))(input)
+    delimited(
+        tag("\""),
+        escaped(is_not(r#"\""#), '\\', one_of(r#"""#)),
+        tag("\""),
+    )(input)
 }
 
 fn value_bool(input: &str) -> IResult<&str, &str> {
@@ -323,7 +326,7 @@ mod tests {
 
     #[test]
     fn nom_value_string() {
-        let input = r#""a\"bc . a 123%!@# ""#;
+        let input = r#""a\"bc . a 123%!@# " abc"#;
         println!("{}", input);
         let result = super::value_string(input).unwrap();
         println!("result: {:?}", result);
