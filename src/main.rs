@@ -1,31 +1,28 @@
+mod shared;
+mod value;
 use std::error::Error;
 
 use nom::{
     branch::alt,
     bytes::complete::{escaped, is_not, tag, tag_no_case, take_until},
-    character::complete::{alpha0, alpha1, anychar, none_of, one_of},
-    combinator::{map_res, not},
+    character::complete::{alpha0, alpha1, one_of},
+    combinator::{map_res, recognize},
     multi::many0,
-    sequence::{delimited, preceded, tuple},
+    sequence::{delimited, tuple},
     IResult,
 };
+use shared::double_qoute;
 
-fn main() {
-    println!("Hello, world!");
-}
+fn main() {}
 
-#[derive(Debug)]
-enum Value {
-    String(String),
-    Number(String),
-    Bool(String),
-}
-
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct KeyValue {
-    key: String,
-    value: Value,
+    key: Key,
+    value: String,
 }
+
+#[derive(Debug, PartialEq)]
+struct Key(String); // TODO: Value
 
 #[derive(Debug)]
 struct Variable(String);
@@ -37,7 +34,7 @@ struct Label(String);
 struct Node {
     variable: Option<Variable>,
     labels: Vec<Label>,
-    values: Vec<Value>,
+    values: Vec<String>, // TODO: Value
 }
 
 #[derive(Debug, PartialEq)]
@@ -83,15 +80,11 @@ enum Clause {
 
 struct Query {}
 
-fn from_value_bool(input: &str) -> Result<Value, Box<dyn Error>> {
+fn from_value_bool(input: &str) -> Result<String, Box<dyn Error>> {
     match input.to_lowercase().as_ref() {
-        "false" | "true" => Ok(Value::Bool(input.to_string())),
+        "false" | "true" => Ok(input.to_string()),
         _ => Err("Not a bool value".into()),
     }
-}
-
-fn double_qoute(input: &str) -> IResult<&str, &str> {
-    tag("\"")(input)
 }
 
 fn empty_string(input: &str) -> IResult<&str, &str> {
@@ -99,11 +92,11 @@ fn empty_string(input: &str) -> IResult<&str, &str> {
 }
 
 fn value_string(input: &str) -> IResult<&str, &str> {
-    delimited(
+    recognize(delimited(
         tag("\""),
         escaped(is_not(r#"\""#), '\\', one_of(r#"""#)),
         tag("\""),
-    )(input)
+    ))(input)
 }
 
 fn value_bool(input: &str) -> IResult<&str, &str> {
@@ -322,26 +315,5 @@ mod tests {
         let pattern_str = "(n:Node)-[r:Relationship]";
         let path_pattern = super::path_pattern(pattern_str);
         println!("path_pattern: {:?}", path_pattern);
-    }
-
-    #[test]
-    fn nom_value_string() {
-        let input = r#""a\"bc . a 123%!@# " abc"#;
-        println!("{}", input);
-        let result = super::value_string(input).unwrap();
-        println!("result: {:?}", result);
-
-        /*
-        let input = "\"abc\"";
-        let result = super::value_string(input).unwrap();
-        println!("result: {:?}", result);
-        */
-
-        /*
-        let input = "\"a\\\"bc\"";
-        println!("{}", input);
-        let result = super::value_string(input).unwrap();
-        println!("result: {}, {}", result.0, result.1);
-        */
     }
 }
