@@ -13,13 +13,9 @@ use crate::shared::{double_qoute, is_alphanumeric, single_qoute};
 pub struct Value<'a>(pub &'a str);
 
 fn allowed_for_other(c: char) -> bool {
-    if is_alphanumeric(c) {
-        return true;
-    }
-
     match c {
         '-' | '.' => true,
-        _ => false,
+        c => is_alphanumeric(c),
     }
 }
 
