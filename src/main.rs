@@ -2,6 +2,8 @@ mod shared;
 mod value;
 mod key_value;
 mod key;
+mod properties;
+
 use std::error::Error;
 
 use nom::{

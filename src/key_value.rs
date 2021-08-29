@@ -4,8 +4,8 @@ use crate::{key::Key, value::Value};
 
 #[derive(Debug, PartialEq)]
 pub struct KeyValue<'a> {
-    key: Key<'a>,
-    value: Value<'a>,
+    pub key: Key<'a>,
+    pub value: Value<'a>,
 }
 
 impl<'a> KeyValue<'a> {
