@@ -3,6 +3,9 @@ mod key_value;
 mod properties;
 mod shared;
 mod value;
+mod node;
+mod token;
+mod label;
 
 use std::error::Error;
 
