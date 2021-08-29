@@ -1,8 +1,8 @@
+mod key;
+mod key_value;
+mod properties;
 mod shared;
 mod value;
-mod key_value;
-mod key;
-mod properties;
 
 use std::error::Error;
 
@@ -18,15 +18,6 @@ use nom::{
 use shared::double_qoute;
 
 fn main() {}
-
-#[derive(Debug, PartialEq)]
-struct KeyValue {
-    key: Key,
-    value: String,
-}
-
-#[derive(Debug, PartialEq)]
-struct Key(String); // TODO: Value
 
 #[derive(Debug)]
 struct Variable(String);
@@ -83,29 +74,6 @@ enum Clause {
 }
 
 struct Query {}
-
-fn from_value_bool(input: &str) -> Result<String, Box<dyn Error>> {
-    match input.to_lowercase().as_ref() {
-        "false" | "true" => Ok(input.to_string()),
-        _ => Err("Not a bool value".into()),
-    }
-}
-
-fn empty_string(input: &str) -> IResult<&str, &str> {
-    Ok((tuple((double_qoute, double_qoute))(input)?.0, ""))
-}
-
-fn value_string(input: &str) -> IResult<&str, &str> {
-    recognize(delimited(
-        tag("\""),
-        escaped(is_not(r#"\""#), '\\', one_of(r#"""#)),
-        tag("\""),
-    ))(input)
-}
-
-fn value_bool(input: &str) -> IResult<&str, &str> {
-    alt((tag_no_case("true"), tag_no_case("false")))(input)
-}
 
 fn from_keyword(input: &str) -> Result<Clause, String> {
     match input.to_lowercase() {
