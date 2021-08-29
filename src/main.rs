@@ -1,11 +1,12 @@
 mod key;
 mod key_value;
-mod properties;
-mod shared;
-mod value;
-mod node;
-mod token;
 mod label;
+mod node;
+mod properties;
+mod relationship;
+mod shared;
+mod token;
+mod value;
 
 use std::error::Error;
 
