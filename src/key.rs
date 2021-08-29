@@ -8,7 +8,7 @@ use nom::{
 use crate::shared::{is_alphabetic, is_alphanumeric};
 
 #[derive(Debug, PartialEq)]
-pub struct Key<'a>(&'a str);
+pub struct Key<'a>(pub &'a str);
 
 impl<'a> Key<'a> {
     fn parse_first_character(input: &str) -> IResult<&str, &str> {
