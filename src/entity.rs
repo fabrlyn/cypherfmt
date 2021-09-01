@@ -24,7 +24,7 @@ impl<'a> Entity<'a> {
 }
 
 #[cfg(test)]
-mod component_tests {
+mod tests {
     use super::*;
 
     #[test]
@@ -54,64 +54,6 @@ mod component_tests {
             }),
         ));
         let actual = Entity::parse("-[]- data");
-        assert_eq!(expected, actual);
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Pattern<'a>(pub Vec<Entity<'a>>);
-
-impl<'a> Pattern<'a> {
-    pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        map(many1(Entity::parse), Pattern)(input)
-    }
-}
-
-#[cfg(test)]
-mod pattern_test {
-    use crate::{
-        key::Key, key_value::KeyValue, label::Label, properties::Properties, value::Value,
-    };
-
-    use super::*;
-
-    #[test]
-    fn parse_pattern_node_relationship_node() {
-        let expected = Ok((
-            " data",
-            Pattern(vec![
-                Entity::Node(Node {
-                    variable: Some("var1"),
-                    labels: vec![Label("ALabel")],
-                    properties: Some(Properties(vec![KeyValue {
-                        key: Key("a"),
-                        value: Value("10"),
-                    }])),
-                }),
-                Entity::Relationship(Relationship {
-                    variable: Some("rel1"),
-                    labels: vec![Label("ARelationship")],
-                    properties: Some(Properties(vec![KeyValue {
-                        key: Key("r"),
-                        value: Value("15"),
-                    }])),
-                    right_line: Line("-"),
-                    left_line: Line("<-"),
-                }),
-                Entity::Node(Node {
-                    variable: Some("var2"),
-                    labels: vec![Label("BLabel")],
-                    properties: Some(Properties(vec![KeyValue {
-                        key: Key("b"),
-                        value: Value("20"),
-                    }])),
-                }),
-            ]),
-        ));
-
-        let actual = Pattern::parse(
-            "(var1:ALabel{a:10})<-[rel1:ARelationship{r:15}]-(var2:BLabel{b:20}) data",
-        );
         assert_eq!(expected, actual);
     }
 }
