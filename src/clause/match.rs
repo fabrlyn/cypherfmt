@@ -51,4 +51,23 @@ mod tests {
         let actual = Match::parse("MATCH (a:ALabel) data");
         assert_eq!(expected, actual);
     }
+
+    #[test]
+    fn parse_match_optional() {
+        let expected = Ok((
+            " data",
+            Match {
+                optional: true,
+                patterns: vec![Pattern(vec![Entity::Node(Node {
+                    variable: Some("a"),
+                    properties: None,
+                    labels: vec![Label("ALabel")],
+                })])],
+                r#where: None,
+            },
+        ));
+
+        let actual = Match::parse("OPTIONAL MATCH (a:ALabel) data");
+        assert_eq!(expected, actual);
+    }
 }
