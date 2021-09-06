@@ -1,16 +1,17 @@
-mod key;
-mod subclause;
 mod clause;
+mod entity;
 mod expression;
+mod key;
 mod key_value;
 mod label;
-mod pattern;
 mod line;
+mod literal;
 mod node;
-mod entity;
+mod pattern;
 mod properties;
 mod relationship;
 mod shared;
+mod subclause;
 mod token;
 mod value;
 
