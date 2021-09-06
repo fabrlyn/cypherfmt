@@ -3,3 +3,4 @@ mod double;
 mod number;
 mod string;
 mod bool;
+mod null;
