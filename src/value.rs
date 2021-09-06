@@ -132,31 +132,5 @@ mod tests {
         assert_eq!(expected, actual);
     }
 
-    #[test]
-    fn parse_bool_true() {
-        let expected = Ok((" data", Value("true")));
-        let actual = Value::parse("true data");
-        assert_eq!(expected, actual);
-    }
 
-    #[test]
-    fn parse_bool_false() {
-        let expected = Ok((" data", Value("false")));
-        let actual = Value::parse("false data");
-        assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn parse_double_qoute_string() {
-        let expected = Ok((" abc", Value(r#""a\"bc . a 123%!@# ""#)));
-        let actual = Value::parse(r#""a\"bc . a 123%!@# " abc"#);
-        assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn parse_single_qoute_string() {
-        let expected = Ok((" abc", Value(r#"'a\'bc . a 123%!@# '"#)));
-        let actual = Value::parse(r#"'a\'bc . a 123%!@# ' abc"#);
-        assert_eq!(expected, actual);
-    }
 }
