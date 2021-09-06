@@ -86,7 +86,7 @@ mod exponent_tests {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Regular<'a>(&'a str);
+pub struct Regular<'a>(pub &'a str);
 
 impl<'a> Regular<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {

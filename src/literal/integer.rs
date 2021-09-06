@@ -57,7 +57,7 @@ mod integer_tests {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Decimal<'a>(&'a str);
+pub struct Decimal<'a>(pub &'a str);
 
 impl<'a> Decimal<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
