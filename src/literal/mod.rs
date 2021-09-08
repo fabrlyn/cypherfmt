@@ -41,18 +41,21 @@ mod tests {
 
     use super::*;
 
+    #[test]
     fn parse_literal_null() {
         let expected = Ok((" data", Literal::Null(Null("NULL"))));
         let actual = Literal::parse("NULL data");
         assert_eq!(expected, actual);
     }
 
+    #[test]
     fn parse_literal_bool() {
         let expected = Ok((" data", Literal::Bool(Bool("TRUE"))));
         let actual = Literal::parse("TRUE data");
         assert_eq!(expected, actual);
     }
 
+    #[test]
     fn parse_literal_number() {
         let expected = Ok((
             " data",
@@ -62,9 +65,10 @@ mod tests {
         assert_eq!(expected, actual);
     }
 
+    #[test]
     fn parse_literal_string() {
-        let expected = Ok((" data", Literal::String(String("someString"))));
-        let actual = Literal::parse("someString data");
+        let expected = Ok((" data", Literal::String(String("\"someString\""))));
+        let actual = Literal::parse("\"someString\" data");
         assert_eq!(expected, actual);
     }
 }
