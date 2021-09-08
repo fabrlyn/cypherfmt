@@ -1,7 +1,7 @@
 use nom::{bytes::complete::tag, combinator::map, IResult};
 
 #[derive(Debug, PartialEq)]
-pub struct Null<'a>(&'a str);
+pub struct Null<'a>(pub &'a str);
 
 impl<'a> Null<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {

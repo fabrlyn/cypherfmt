@@ -10,7 +10,7 @@ use nom::{
 use crate::shared::{double_qoute, single_qoute};
 
 #[derive(Debug, PartialEq)]
-pub struct String<'a>(&'a str);
+pub struct String<'a>(pub &'a str);
 
 impl<'a> String<'a> {
     fn parse_double_qoute_string(input: &'a str) -> IResult<&str, &str> {

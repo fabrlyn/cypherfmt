@@ -1,7 +1,7 @@
 use nom::{branch::alt, bytes::complete::tag, combinator::map, IResult};
 
 #[derive(Debug, PartialEq)]
-pub struct Bool<'a>(&'a str);
+pub struct Bool<'a>(pub &'a str);
 
 impl<'a> Bool<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
