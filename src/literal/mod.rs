@@ -2,12 +2,12 @@ use nom::{combinator::map, IResult};
 
 use self::{bool::Bool, null::Null, number::Number, string::String};
 
-mod bool;
-mod double;
+pub mod bool;
+pub mod double;
 pub mod integer;
-mod null;
-mod number;
-mod string;
+pub mod null;
+pub mod number;
+pub mod string;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal<'a> {

@@ -4,13 +4,14 @@ use nom::combinator::recognize;
 use nom::{bytes::complete::tag, combinator::map, sequence::tuple, IResult};
 
 use crate::literal::integer::Decimal;
+use crate::symbolic_name;
 
 #[derive(Debug, PartialEq)]
-pub struct Parameter<'a>(&'a str);
+pub struct Parameter<'a>(pub &'a str);
 
 impl<'a> Parameter<'a> {
     fn parse_symbolic_name(input: &str) -> IResult<&str, &str> {
-        recognize(tuple((tag("$"), alpha1, alphanumeric0)))(input)
+        recognize(tuple((tag("$"), symbolic_name::parse)))(input)
     }
 
     fn parse_decimal(input: &'a str) -> IResult<&str, &str> {

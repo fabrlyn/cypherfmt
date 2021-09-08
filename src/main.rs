@@ -1,4 +1,5 @@
 mod atom;
+mod symbolic_name;
 mod parameter;
 mod clause;
 mod entity;
