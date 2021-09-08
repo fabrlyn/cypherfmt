@@ -14,26 +14,3 @@ impl<'a> Where<'a> {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{entity::Entity, label::Label, node::Node, pattern::Pattern};
-
-    use super::*;
-
-    #[test]
-    fn parse_where() {
-        let actual = Ok((
-            " data",
-            Where(vec![Expression::Pattern(Pattern(vec![Entity::Node(
-                Node {
-                    variable: Some("a"),
-                    labels: vec![Label("ALabel")],
-                    properties: None,
-                },
-            )]))]),
-        ));
-
-        let expected = Where::parse("WHERE (a:ALabel) data");
-        assert_eq!(expected, actual);
-    }
-}

@@ -2,6 +2,7 @@ use nom::{combinator::map, IResult};
 
 use self::{bool::Bool, null::Null, number::Number, string::String};
 
+pub mod list;
 pub mod bool;
 pub mod double;
 pub mod integer;

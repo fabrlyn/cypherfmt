@@ -36,7 +36,6 @@ pub fn optional_signed(input: &str) -> IResult<&str, &str> {
     optional(tag("-"))(input)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
