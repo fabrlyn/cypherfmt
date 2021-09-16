@@ -1,4 +1,8 @@
 mod atom;
+mod cypher;
+mod projection_body;
+mod r#return;
+mod single_part_query;
 mod symbolic_name;
 mod parameter;
 mod clause;
@@ -18,4 +22,6 @@ mod subclause;
 mod token;
 mod value;
 
-fn main() {}
+fn main() {
+    let query = "MATCH (n:SomeNode) WHERE n.id IN [1,2,3,4] RETURN n, true as someValue";
+}
