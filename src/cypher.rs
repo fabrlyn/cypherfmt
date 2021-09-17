@@ -1,6 +1,5 @@
-use std::error::Error;
-
 use nom::{
+    branch::alt,
     bytes::complete::{tag, tag_no_case},
     character::complete::space1,
     combinator::{map, recognize},
@@ -19,7 +18,7 @@ pub enum PartQuery<'a> {
 
 impl<'a> PartQuery<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        todo!()
+        map(SinglePartQuery::parse, PartQuery::Single)(input)
     }
 }
 
@@ -38,12 +37,17 @@ fn parse_union_all(input: &str) -> IResult<&str, &str> {
 }
 
 impl<'a> CombinablePartQuery<'a> {
-    fn parse_combinator(input: &str) -> IResult<&str, &str> {
-        todo!()
-    }
-
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        todo!()
+        map(
+            tuple((
+                optional(alt((parse_union_all, parse_union))),
+                PartQuery::parse,
+            )),
+            |(combinator, part_query)| CombinablePartQuery {
+                combinator,
+                part_query,
+            },
+        )(input)
     }
 }
 
@@ -59,7 +63,7 @@ impl<'a> Cypher<'a> {
             tuple((many1(PartQuery::parse), optional(tag(";")))),
             |(queries, semicolon)| Cypher {
                 queries,
-                semicolon: semicolon == ";",
+                semicolon: semicolon.is_some(),
             },
         )(query)
     }

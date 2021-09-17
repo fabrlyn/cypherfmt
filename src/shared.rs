@@ -20,19 +20,21 @@ pub fn single_qoute(input: &str) -> IResult<&str, &str> {
     tag("'")(input)
 }
 
-pub fn optional<'a, E, P>(mut parser: P) -> impl FnMut(&'a str) -> IResult<&'a str, &'a str, E>
+pub fn optional<'a, E, P>(
+    mut parser: P,
+) -> impl FnMut(&'a str) -> IResult<&'a str, Option<&'a str>, E>
 where
     P: Parser<&'a str, &'a str, E>,
 {
     move |input: &str| {
         if let Ok((input, result)) = parser.parse(input) {
-            return Ok((input, result));
+            return Ok((input, Some(result)));
         }
-        Ok((input, ""))
+        Ok((input, None))
     }
 }
 
-pub fn optional_signed(input: &str) -> IResult<&str, &str> {
+pub fn optional_signed(input: &str) -> IResult<&str, Option<&str>> {
     optional(tag("-"))(input)
 }
 
@@ -42,14 +44,14 @@ mod tests {
 
     #[test]
     fn parse_optional_signed() {
-        let expected = Ok(("123", "-"));
+        let expected = Ok(("123", Some("-")));
         let actual = optional_signed("-123");
         assert_eq!(expected, actual);
     }
 
     #[test]
     fn parse_optional_signed_missing() {
-        let expected = Ok(("123", ""));
+        let expected = Ok(("123", None));
         let actual = optional_signed("123");
         assert_eq!(expected, actual);
     }
