@@ -20,11 +20,11 @@ pub fn single_qoute(input: &str) -> IResult<&str, &str> {
     tag("'")(input)
 }
 
-pub fn optional<'a, E, P>(
+pub fn optional<'a, E, P, T>(
     mut parser: P,
-) -> impl FnMut(&'a str) -> IResult<&'a str, Option<&'a str>, E>
+) -> impl FnMut(&'a str) -> IResult<&'a str, Option<T>, E>
 where
-    P: Parser<&'a str, &'a str, E>,
+    P: Parser<&'a str, T, E>,
 {
     move |input: &str| {
         if let Ok((input, result)) = parser.parse(input) {
