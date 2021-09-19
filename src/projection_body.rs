@@ -1,8 +1,8 @@
 use nom::{
     bytes::complete::{tag, tag_no_case},
-    character::complete::space1,
+    character::complete::{space0, space1},
     combinator::{map, recognize},
-    multi::many0,
+    multi::{many0, separated_list0},
     sequence::tuple,
     IResult,
 };
@@ -19,8 +19,8 @@ pub enum Order {
 
 #[derive(Debug, PartialEq)]
 pub struct ProjectionItem<'a> {
-    expression: Expression<'a>,
-    variable: Option<&'a str>,
+    pub expression: Expression<'a>,
+    pub variable: Option<&'a str>,
 }
 
 impl<'a> ProjectionItem<'a> {
@@ -36,10 +36,9 @@ impl<'a> ProjectionItem<'a> {
 
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, expression) = Expression::parse(input)?;
-        let (input, _) = space1(input)?;
         let (input, variable) = optional(map(
-            tuple((tag_no_case("AS"), space1, symbolic_name::parse)),
-            |(_, _, variable)| variable,
+            tuple((space1, tag_no_case("AS"), space1, symbolic_name::parse)),
+            |(_, _, _, variable)| variable,
         ))(input)?;
         Ok((
             input,
@@ -65,12 +64,12 @@ impl<'a> SortItem<'a> {
 
 #[derive(Debug, PartialEq)]
 pub struct ProjectionBody<'a> {
-    distinct: bool,
-    wild_card: bool,
-    projection_items: Vec<ProjectionItem<'a>>,
-    sort_expressions: Vec<SortItem<'a>>,
-    skip_expression: Option<Expression<'a>>,
-    limit_expression: Option<Expression<'a>>,
+    pub distinct: bool,
+    pub wild_card: bool,
+    pub projection_items: Vec<ProjectionItem<'a>>,
+    pub sort_expressions: Vec<SortItem<'a>>,
+    pub skip_expression: Option<Expression<'a>>,
+    pub limit_expression: Option<Expression<'a>>,
 }
 
 fn parse_distinct<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
@@ -90,9 +89,7 @@ fn parse_order_by<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
 }
 
 fn parse_projection_items<'a>(input: &'a str) -> IResult<&str, Vec<ProjectionItem<'a>>> {
-    map(many0(tuple((ProjectionItem::parse, space1))), |result| {
-        result.into_iter().map(|(item, _)| item).collect()
-    })(input)
+    separated_list0(tag(", "), ProjectionItem::parse)(input)
 }
 
 fn parse_sort_items<'a>(input: &'a str) -> IResult<&str, Vec<SortItem<'a>>> {

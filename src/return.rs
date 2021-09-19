@@ -20,3 +20,34 @@ impl<'a> Return<'a> {
         )(input)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        expression::Expression,
+        projection_body::{ProjectionBody, ProjectionItem},
+        r#return::Return,
+    };
+
+    #[test]
+    fn parse_return_list_of_integer_decimals() {
+        let list = Expression::list_of_decimal_ints(&["10", "11", "12"]);
+
+        let expected = Ok((
+            " data",
+            Return(ProjectionBody {
+                distinct: false,
+                wild_card: false,
+                projection_items: vec![ProjectionItem {
+                    expression: list,
+                    variable: None,
+                }],
+                sort_expressions: vec![],
+                skip_expression: None,
+                limit_expression: None,
+            }),
+        ));
+        let actual = Return::parse("RETURN [10, 11, 12] data");
+        assert_eq!(expected, actual);
+    }
+}

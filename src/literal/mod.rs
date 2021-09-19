@@ -43,6 +43,10 @@ impl<'a> Literal<'a> {
             return Ok((input, Literal::Number(number)));
         }
 
+        if let Ok((input, list)) = List::parse(input) {
+            return Ok((input, Literal::List(list)));
+        }
+
         map(String::parse, Literal::String)(input)
     }
 }

@@ -25,7 +25,8 @@ mod token;
 mod value;
 
 fn main() {
-    let query = "MATCH (n:SomeNode) RETURN n";
+    let query = "MATCH (n:SomeNode)-[r:Rel]-(m:OtherNode) RETURN [1,2,3]";
     let formatted = Cypher::parse(query).unwrap().1;
+    println!("{:?}", formatted);
     println!("{}", formatted.format());
 }
