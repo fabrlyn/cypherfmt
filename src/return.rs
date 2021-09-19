@@ -10,7 +10,7 @@ pub struct Return<'a>(ProjectionBody<'a>);
 
 impl<'a> Return<'a> {
     pub fn format(&self) -> String {
-        format!("{}", self.0.format())
+        format!("RETURN {}", self.0.format())
     }
 
     pub fn parse(input: &'a str) -> IResult<&str, Self> {

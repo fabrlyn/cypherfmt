@@ -12,7 +12,7 @@ pub mod string;
 
 #[derive(Debug, PartialEq)]
 pub enum Literal<'a> {
-    Null(Null<'a>),
+    Null(Null),
     Bool(Bool<'a>),
     Number(Number<'a>),
     String(String<'a>),
@@ -53,7 +53,7 @@ mod tests {
 
     #[test]
     fn parse_literal_null() {
-        let expected = Ok((" data", Literal::Null(Null("NULL"))));
+        let expected = Ok((" data", Literal::Null(Null)));
         let actual = Literal::parse("NULL data");
         assert_eq!(expected, actual);
     }

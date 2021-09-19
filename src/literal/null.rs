@@ -1,15 +1,15 @@
-use nom::{bytes::complete::tag, combinator::map, IResult};
+use nom::{bytes::complete::tag_no_case, combinator::map, IResult};
 
 #[derive(Debug, PartialEq)]
-pub struct Null<'a>(pub &'a str);
+pub struct Null;
 
-impl<'a> Null<'a> {
+impl Null {
     pub fn format(&self) -> String {
-        self.0.to_string()
+        "NULL".to_string()
     }
 
-    pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        map(tag("NULL"), Null)(input)
+    pub fn parse(input: &str) -> IResult<&str, Self> {
+        map(tag_no_case("NULL"), |_| Null)(input)
     }
 }
 
@@ -19,8 +19,15 @@ mod tests {
 
     #[test]
     fn parse_null() {
-        let expected = Ok((" data", Null("NULL")));
-        let actual = Null::parse("NULL data");
+        let expected = Ok((" data", Null));
+        let actual = Null::parse("null data");
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_null() {
+        let expected = "NULL";
+        let actual = Null.format();
         assert_eq!(expected, actual);
     }
 }
