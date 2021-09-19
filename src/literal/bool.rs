@@ -12,6 +12,13 @@ impl Bool {
         .to_string()
     }
 
+    pub fn format_mut(&self, out: &mut String) {
+        match self.0 {
+            true => out.push_str("TRUE"),
+            false => out.push_str("FALSE"),
+        }
+    }
+
     pub fn parse(input: &str) -> IResult<&str, Self> {
         map(
             alt((
@@ -52,6 +59,22 @@ mod tests {
     fn format_bool_true() {
         let expected = "TRUE";
         let actual = Bool(true).format();
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_mut_bool_false() {
+        let expected = "FALSE";
+        let mut actual = String::new();
+        Bool(false).format_mut(&mut actual);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_mut_bool_true() {
+        let expected = "TRUE";
+        let mut actual = String::new();
+        Bool(true).format_mut(&mut actual);
         assert_eq!(expected, actual);
     }
 }

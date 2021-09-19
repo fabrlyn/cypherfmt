@@ -49,5 +49,5 @@ fn properties_literal() {
 fn main() {
     //basic_query();
     //list_literal();
-    properties_literal();
+    //properties_literal();
 }

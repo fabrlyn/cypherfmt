@@ -8,6 +8,10 @@ impl Null {
         "NULL".to_string()
     }
 
+    pub fn format_mut(&self, out: &mut String) {
+        out.push_str("NULL");
+    }
+
     pub fn parse(input: &str) -> IResult<&str, Self> {
         map(tag_no_case("NULL"), |_| Null)(input)
     }
@@ -28,6 +32,14 @@ mod tests {
     fn format_null() {
         let expected = "NULL";
         let actual = Null.format();
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_mut_null() {
+        let expected = "NULL";
+        let mut actual = String::new();
+        Null.format_mut(&mut actual);
         assert_eq!(expected, actual);
     }
 }
