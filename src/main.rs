@@ -1,3 +1,5 @@
+use expression::Expression;
+
 use crate::cypher::Cypher;
 
 mod atom;
@@ -24,9 +26,28 @@ mod symbolic_name;
 mod token;
 mod value;
 
-fn main() {
+fn basic_query() {
     let query = "MATCH (n:SomeNode)-[r:Rel]-(m:OtherNode) RETURN [1,2,3]";
     let formatted = Cypher::parse(query).unwrap().1;
     println!("{:?}", formatted);
     println!("{}", formatted.format());
+}
+
+fn list_literal() {
+    let formatted = Expression::parse("[  1   ,2, 3 , 4]").unwrap().1.format();
+    println!("{}", formatted);
+}
+
+fn properties_literal() {
+    let formatted = Expression::parse("{   a: 10, b:20,c:40}")
+        .unwrap()
+        .1
+        .format();
+    println!("{}", formatted);
+}
+
+fn main() {
+    //basic_query();
+    //list_literal();
+    properties_literal();
 }

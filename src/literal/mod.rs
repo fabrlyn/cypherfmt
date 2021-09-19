@@ -1,5 +1,7 @@
 use nom::{combinator::map, IResult};
 
+use crate::properties::Properties;
+
 use self::{bool::Bool, list::List, null::Null, number::Number, string::String};
 
 pub mod bool;
@@ -16,6 +18,7 @@ pub enum Literal<'a> {
     Bool(Bool),
     Number(Number<'a>),
     List(List<'a>),
+    Properties(Properties<'a>),
     String(String<'a>),
 }
 
@@ -26,6 +29,7 @@ impl<'a> Literal<'a> {
             Literal::Bool(b) => b.format(),
             Literal::Number(n) => n.format(),
             Literal::List(l) => l.format(),
+            Literal::Properties(p) => p.format(),
             Literal::String(s) => s.format(),
         }
     }
@@ -45,6 +49,10 @@ impl<'a> Literal<'a> {
 
         if let Ok((input, list)) = List::parse(input) {
             return Ok((input, Literal::List(list)));
+        }
+
+        if let Ok((input, properties)) = Properties::parse(input) {
+            return Ok((input, Literal::Properties(properties)));
         }
 
         map(String::parse, Literal::String)(input)
