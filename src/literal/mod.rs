@@ -1,6 +1,6 @@
 use nom::{combinator::map, IResult};
 
-use self::{bool::Bool, null::Null, number::Number, string::String};
+use self::{bool::Bool, list::List, null::Null, number::Number, string::String};
 
 pub mod bool;
 pub mod double;
@@ -15,6 +15,7 @@ pub enum Literal<'a> {
     Null(Null),
     Bool(Bool),
     Number(Number<'a>),
+    List(List<'a>),
     String(String<'a>),
 }
 
@@ -24,6 +25,7 @@ impl<'a> Literal<'a> {
             Literal::Null(n) => n.format(),
             Literal::Bool(b) => b.format(),
             Literal::Number(n) => n.format(),
+            Literal::List(l) => l.format(),
             Literal::String(s) => s.format(),
         }
     }
