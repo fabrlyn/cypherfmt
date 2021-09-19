@@ -38,7 +38,7 @@ mod tests {
     fn parse_where() {
         let expected = Ok((
             " data",
-            Where(vec![Expression(Atom::Literal(Literal::Bool(Bool("TRUE"))))]),
+            Where(vec![Expression(Atom::Literal(Literal::Bool(Bool(true))))]),
         ));
         let actual = Where::parse("WHERE TRUE data");
         assert_eq!(expected, actual);

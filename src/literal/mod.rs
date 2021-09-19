@@ -13,7 +13,7 @@ pub mod string;
 #[derive(Debug, PartialEq)]
 pub enum Literal<'a> {
     Null(Null),
-    Bool(Bool<'a>),
+    Bool(Bool),
     Number(Number<'a>),
     String(String<'a>),
 }
@@ -60,7 +60,7 @@ mod tests {
 
     #[test]
     fn parse_literal_bool() {
-        let expected = Ok((" data", Literal::Bool(Bool("TRUE"))));
+        let expected = Ok((" data", Literal::Bool(Bool(true))));
         let actual = Literal::parse("TRUE data");
         assert_eq!(expected, actual);
     }

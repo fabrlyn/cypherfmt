@@ -38,7 +38,7 @@ mod tests {
 
     #[test]
     fn parse_atom_literal() {
-        let expected = Ok((" data", Atom::Literal(Literal::Bool(Bool("TRUE")))));
+        let expected = Ok((" data", Atom::Literal(Literal::Bool(Bool(true)))));
         let actual = Atom::parse("TRUE data");
         assert_eq!(expected, actual);
     }
