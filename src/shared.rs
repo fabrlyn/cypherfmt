@@ -1,7 +1,4 @@
-use nom::{
-    bytes::complete::tag,
-    IResult, Parser,
-};
+use nom::{bytes::complete::tag, IResult, Parser};
 
 pub fn is_alphanumeric(c: char) -> bool {
     nom::character::is_alphanumeric(c as u8)
@@ -19,9 +16,7 @@ pub fn single_qoute(input: &str) -> IResult<&str, &str> {
     tag("'")(input)
 }
 
-pub fn optional<'a, E, P, T>(
-    mut parser: P,
-) -> impl FnMut(&'a str) -> IResult<&'a str, Option<T>, E>
+pub fn optional<'a, E, P, T>(mut parser: P) -> impl FnMut(&'a str) -> IResult<&'a str, Option<T>, E>
 where
     P: Parser<&'a str, T, E>,
 {

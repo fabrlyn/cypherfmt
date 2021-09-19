@@ -1,20 +1,26 @@
-use nom::{character::complete::space0, combinator::map, sequence::tuple, IResult};
+use nom::{
+    bytes::complete::tag, character::complete::space0, combinator::map, sequence::tuple, IResult,
+};
 
-use crate::{key::Key, value::Value};
+use crate::{expression::Expression, token};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct KeyValue<'a> {
-    pub key: Key<'a>,
-    pub value: Value<'a>,
+    pub key: &'a str,
+    pub value: Expression<'a>,
 }
 
 impl<'a> KeyValue<'a> {
     pub fn format(&self) -> String {
-        format!("{}: {}", self.key.format(), self.value.format())
+        format!("{}: {}", self.key, self.value.format())
     }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
-            tuple((Key::parse, space0, Value::parse)),
+            tuple((
+                token::parse,
+                tuple((space0, tag(":"), space0)),
+                Expression::parse,
+            )),
             |(key, _, value)| KeyValue { key, value },
         )(input)
     }
@@ -28,12 +34,26 @@ mod tests {
         let expected = Ok((
             " some data",
             KeyValue {
-                key: Key("some_key"),
-                value: Value("10"),
+                key: "some_key",
+                value: Expression::decimal_int("10"),
             },
         ));
 
         let actual = KeyValue::parse("some_key: 10 some data");
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_key_value_with_space() {
+        let expected = "a: [1, 2, 3]";
+        let actual = KeyValue::parse("a : [ 1,2, 3 ]").unwrap().1.format();
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_key_value_without_space() {
+        let expected = "a: [1, 2, 3]";
+        let actual = KeyValue::parse("a:[1,2,3]").unwrap().1.format();
         assert_eq!(expected, actual);
     }
 }

@@ -1,4 +1,11 @@
-use nom::{bytes::complete::tag, combinator::map, multi::many1, sequence::preceded, IResult};
+use nom::{
+    bytes::complete::tag,
+    character::complete::space0,
+    combinator::map,
+    multi::many1,
+    sequence::{preceded, tuple},
+    IResult,
+};
 
 use crate::token;
 
@@ -14,7 +21,7 @@ impl<'a> Label<'a> {
     }
 
     pub fn parse(input: &'a str) -> IResult<&'a str, Vec<Label<'a>>> {
-        many1(preceded(tag(":"), Self::parse_one))(input)
+        many1(preceded(tuple((space0, tag(":"), space0)), Self::parse_one))(input)
     }
 }
 

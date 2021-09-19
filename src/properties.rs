@@ -9,7 +9,7 @@ use nom::{
 
 use crate::key_value::KeyValue;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Properties<'a>(pub Vec<KeyValue<'a>>);
 
 impl<'a> Properties<'a> {
@@ -35,9 +35,9 @@ impl<'a> Properties<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             delimited(
-                tag("{"),
-                separated_list0(tag(","), Self::parse_key_value),
-                tag("}"),
+                tuple((tag("{"), space0)),
+                separated_list0(tuple((space0, tag(","), space0)), Self::parse_key_value),
+                tuple((space0, tag("}"))),
             ),
             Properties,
         )(input)
@@ -46,7 +46,7 @@ impl<'a> Properties<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{key::Key, value::Value};
+    use crate::expression::Expression;
 
     use super::*;
 
@@ -55,8 +55,8 @@ mod tests {
         let expected = Ok((
             " some data",
             Properties(vec![KeyValue {
-                key: Key("some_key"),
-                value: Value("10"),
+                key: "some_key",
+                value: Expression::decimal_int("10"),
             }]),
         ));
 
@@ -70,12 +70,12 @@ mod tests {
             " some data",
             Properties(vec![
                 KeyValue {
-                    key: Key("some_key"),
-                    value: Value("10"),
+                    key: "some_key",
+                    value: Expression::decimal_int("10"),
                 },
                 KeyValue {
-                    key: Key("some_other"),
-                    value: Value("false"),
+                    key: "some_other",
+                    value: Expression::decimal_int("false"),
                 },
             ]),
         ));

@@ -1,10 +1,9 @@
 use nom::{
     combinator::{map, opt},
-    multi::many1,
     IResult,
 };
 
-use crate::{line::Line, node::Node, relationship::Relationship};
+use crate::{node::Node, relationship::Relationship};
 
 #[derive(Debug, PartialEq)]
 pub enum Entity<'a> {
@@ -13,11 +12,10 @@ pub enum Entity<'a> {
 }
 
 impl<'a> Entity<'a> {
-
     pub fn format(&self) -> String {
         match self {
             Entity::Node(n) => n.format(),
-            Entity::Relationship(r) => r.format()
+            Entity::Relationship(r) => r.format(),
         }
     }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
@@ -32,6 +30,8 @@ impl<'a> Entity<'a> {
 
 #[cfg(test)]
 mod tests {
+    use crate::line::Line;
+
     use super::*;
 
     #[test]

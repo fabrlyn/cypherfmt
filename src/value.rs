@@ -9,7 +9,7 @@ use nom::{
 
 use crate::shared::{double_qoute, is_alphanumeric, single_qoute};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Value<'a>(pub &'a str);
 
 fn allowed_for_other(c: char) -> bool {

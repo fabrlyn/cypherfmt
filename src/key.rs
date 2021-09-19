@@ -2,7 +2,7 @@ use nom::{bytes::complete::tag, combinator::map, IResult};
 
 use crate::token;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Key<'a>(pub &'a str);
 
 impl<'a> Key<'a> {
@@ -24,7 +24,7 @@ mod tests {
     #[test]
     fn parse_key() {
         let expected = Ok((" data", Key("some_Key_1")));
-        let actual = Key::parse("some_Key_1: data");
+        let actual = Key::parse("some_Key_1 data");
         assert_eq!(expected, actual);
     }
 }

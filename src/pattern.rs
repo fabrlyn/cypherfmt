@@ -25,8 +25,8 @@ impl<'a> Pattern<'a> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        key::Key, key_value::KeyValue, label::Label, line::Line, node::Node,
-        properties::Properties, relationship::Relationship, value::Value,
+        expression::Expression, key_value::KeyValue, label::Label, line::Line, node::Node,
+        properties::Properties, relationship::Relationship,
     };
 
     use super::*;
@@ -40,16 +40,16 @@ mod tests {
                     variable: Some("var1"),
                     labels: vec![Label("ALabel")],
                     properties: Some(Properties(vec![KeyValue {
-                        key: Key("a"),
-                        value: Value("10"),
+                        key: "a",
+                        value: Expression::decimal_int("10"),
                     }])),
                 }),
                 Entity::Relationship(Relationship {
                     variable: Some("rel1"),
                     labels: vec![Label("ARelationship")],
                     properties: Some(Properties(vec![KeyValue {
-                        key: Key("r"),
-                        value: Value("15"),
+                        key: "r",
+                        value: Expression::decimal_int("15"),
                     }])),
                     right_line: Line("-"),
                     left_line: Line("<-"),
@@ -58,8 +58,8 @@ mod tests {
                     variable: Some("var2"),
                     labels: vec![Label("BLabel")],
                     properties: Some(Properties(vec![KeyValue {
-                        key: Key("b"),
-                        value: Value("20"),
+                        key: "b",
+                        value: Expression::decimal_int("20"),
                     }])),
                 }),
             ]),

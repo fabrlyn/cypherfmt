@@ -1,4 +1,5 @@
 use expression::Expression;
+use node::Node;
 
 use crate::cypher::Cypher;
 
@@ -46,8 +47,17 @@ fn properties_literal() {
     println!("{}", formatted);
 }
 
+fn node_literal() {
+    let formatted = Node::parse("( a : ANode:BNode :CNode: DNode{ a:10, b: 'abc', c: [1,2,3]})")
+        .unwrap()
+        .1
+        .format();
+    println!("{}", formatted);
+}
+
 fn main() {
     //basic_query();
     //list_literal();
     //properties_literal();
+    node_literal();
 }

@@ -1,6 +1,6 @@
 use nom::{
     bytes::complete::tag,
-    combinator::{map, opt},
+    combinator::opt,
     sequence::{delimited, tuple},
     IResult,
 };
@@ -33,6 +33,7 @@ impl<'a> Relationship<'a> {
 
     fn properties_str(&self) -> String {
         self.properties
+            .as_ref()
             .clone()
             .map(|p| p.format())
             .unwrap_or("".to_string())
@@ -73,7 +74,7 @@ impl<'a> Relationship<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{key::Key, key_value::KeyValue, value::Value};
+    use crate::{expression::Expression, key::Key, key_value::KeyValue, value::Value};
 
     use super::*;
 
@@ -136,8 +137,8 @@ mod tests {
                 variable: None,
                 labels: vec![],
                 properties: Some(Properties(vec![KeyValue {
-                    key: Key("some_key"),
-                    value: Value("10"),
+                    key: "some_key",
+                    value: Expression::decimal_int("10"),
                 }])),
                 right_line: Line("-"),
                 left_line: Line("-"),
@@ -190,8 +191,8 @@ mod tests {
                 variable: Some("myVar"),
                 labels: vec![Label("ALabel")],
                 properties: Some(Properties(vec![KeyValue {
-                    key: Key("some_key"),
-                    value: Value("10"),
+                    key: "some_key",
+                    value: Expression::decimal_int("10"),
                 }])),
                 right_line: Line("-"),
                 left_line: Line("-"),

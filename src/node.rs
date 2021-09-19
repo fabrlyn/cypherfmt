@@ -1,5 +1,6 @@
 use nom::{
     bytes::complete::tag,
+    character::complete::space0,
     combinator::{map, opt},
     sequence::{delimited, tuple},
     IResult,
@@ -12,6 +13,19 @@ pub struct Node<'a> {
     pub variable: Option<&'a str>,
     pub labels: Vec<Label<'a>>,
     pub properties: Option<Properties<'a>>,
+}
+
+fn parse_token<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
+    opt(map(
+        tuple((space0, token::parse, space0)),
+        |(_, result, _)| result,
+    ))(input)
+}
+
+fn parse_properties<'a>(input: &'a str) -> IResult<&str, Option<Properties<'a>>> {
+    map(tuple((opt(Properties::parse), space0)), |(result, _)| {
+        result
+    })(input)
 }
 
 impl<'a> Node<'a> {
@@ -39,7 +53,7 @@ impl<'a> Node<'a> {
     fn properties_str(&self) -> String {
         self.properties
             .as_ref()
-            .map(|p| p.format())
+            .map(|p| format!(" {}", p.format()))
             .unwrap_or("".to_string())
     }
 
@@ -51,11 +65,12 @@ impl<'a> Node<'a> {
             self.properties_str()
         )
     }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             delimited(
                 tag("("),
-                tuple((opt(token::parse), opt(Label::parse), opt(Properties::parse))),
+                tuple((parse_token, opt(Label::parse), parse_properties)),
                 tag(")"),
             ),
             |(variable, labels, properties)| Node {
@@ -69,7 +84,7 @@ impl<'a> Node<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{key::Key, key_value::KeyValue, value::Value};
+    use crate::{expression::Expression, key_value::KeyValue};
 
     use super::*;
 
@@ -126,8 +141,8 @@ mod tests {
                 variable: None,
                 labels: vec![],
                 properties: Some(Properties(vec![KeyValue {
-                    key: Key("some_key"),
-                    value: Value("10"),
+                    key: "some_key",
+                    value: Expression::decimal_int("10"),
                 }])),
             },
         ));
@@ -174,8 +189,8 @@ mod tests {
                 variable: Some("myVar"),
                 labels: vec![Label("ALabel")],
                 properties: Some(Properties(vec![KeyValue {
-                    key: Key("some_key"),
-                    value: Value("10"),
+                    key: "some_key",
+                    value: Expression::decimal_int("10"),
                 }])),
             },
         ));
