@@ -8,7 +8,6 @@ mod clause;
 mod cypher;
 mod entity;
 mod expression;
-mod key;
 mod key_value;
 mod label;
 mod line;

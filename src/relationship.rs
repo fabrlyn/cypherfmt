@@ -74,7 +74,7 @@ impl<'a> Relationship<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{expression::Expression, key::Key, key_value::KeyValue, value::Value};
+    use crate::{expression::Expression, key_value::KeyValue, value::Value};
 
     use super::*;
 

@@ -75,7 +75,7 @@ mod tests {
                 },
                 KeyValue {
                     key: "some_other",
-                    value: Expression::decimal_int("false"),
+                    value: Expression::bool(false),
                 },
             ]),
         ));

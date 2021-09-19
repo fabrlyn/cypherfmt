@@ -3,6 +3,7 @@ use nom::{combinator::map, IResult};
 use crate::{
     atom::Atom,
     literal::{
+        bool::Bool,
         integer::{Decimal, Integer},
         list::List,
         number::Number,
@@ -29,6 +30,10 @@ impl<'a> Expression<'a> {
         Expression(Atom::Literal(Literal::Number(Number::Integer(
             Integer::Decimal(Decimal(i)),
         ))))
+    }
+
+    pub fn bool(b: bool) -> Self {
+        Expression(Atom::Literal(Literal::Bool(Bool(b))))
     }
 
     pub fn list_of_decimal_ints(ints: &[&'a str]) -> Self {
