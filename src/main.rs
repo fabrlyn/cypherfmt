@@ -26,6 +26,12 @@ mod symbolic_name;
 mod token;
 mod value;
 
+fn basic_limit_query() {
+    let query = " MATCH (p:Person) RETURN p LIMIT 1 ";
+    let formatted = Cypher::parse(query).unwrap().1.format();
+    println!("{}", formatted);
+}
+
 fn basic_query() {
     let query = "MATCH (n:SomeNode)-[r:Rel]-(m:OtherNode) RETURN [1,2,3]";
     let formatted = Cypher::parse(query).unwrap().1;
@@ -47,16 +53,18 @@ fn properties_literal() {
 }
 
 fn node_literal() {
-    let formatted = Node::parse("( a : ANode:BNode :CNode: DNode{ a:10, b: 'abc', c: [1,2,3]})")
-        .unwrap()
-        .1
-        .format();
+    let formatted =
+        Node::parse("( a : ANode:BNode :CNode: DNode{ a:10, b: 'abc', c: [1,2,3]   }    )")
+            .unwrap()
+            .1
+            .format();
     println!("{}", formatted);
 }
 
 fn main() {
     //basic_query();
+    basic_limit_query();
     //list_literal();
     //properties_literal();
-    node_literal();
+    //node_literal();
 }

@@ -1,7 +1,7 @@
 use nom::{
     branch::alt,
     bytes::complete::{tag, tag_no_case},
-    character::complete::space1,
+    character::complete::{space0, space1},
     combinator::{map, recognize},
     multi::many1,
     sequence::tuple,
@@ -66,6 +66,7 @@ pub struct Cypher<'a> {
 
 impl<'a> Cypher<'a> {
     pub fn parse(query: &'a str) -> IResult<&str, Self> {
+        let (query, _) = space0(query)?;
         map(
             tuple((many1(PartQuery::parse), optional(tag(";")))),
             |(queries, semicolon)| Cypher {
