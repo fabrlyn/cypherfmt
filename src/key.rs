@@ -2,10 +2,14 @@ use nom::{bytes::complete::tag, combinator::map, IResult};
 
 use crate::token;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Key<'a>(pub &'a str);
 
 impl<'a> Key<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, key) = map(token::parse, Key)(input)?;
         let (input, _) = tag(":")(input)?;

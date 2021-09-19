@@ -13,6 +13,10 @@ use crate::shared::{double_qoute, single_qoute};
 pub struct String<'a>(pub &'a str);
 
 impl<'a> String<'a> {
+    pub fn format(&self) -> std::string::String {
+        self.0.to_string()
+    }
+
     fn parse_double_qoute_string(input: &'a str) -> IResult<&str, &str> {
         recognize(delimited(
             double_qoute,

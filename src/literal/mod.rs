@@ -2,10 +2,10 @@ use nom::{combinator::map, IResult};
 
 use self::{bool::Bool, null::Null, number::Number, string::String};
 
-pub mod list;
 pub mod bool;
 pub mod double;
 pub mod integer;
+pub mod list;
 pub mod null;
 pub mod number;
 pub mod string;
@@ -19,6 +19,15 @@ pub enum Literal<'a> {
 }
 
 impl<'a> Literal<'a> {
+    pub fn format(&self) -> std::string::String {
+        match self {
+            Literal::Null(n) => n.format(),
+            Literal::Bool(b) => b.format(),
+            Literal::Number(n) => n.format(),
+            Literal::String(s) => s.format(),
+        }
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         if let Ok((input, null)) = Null::parse(input) {
             return Ok((input, Literal::Null(null)));

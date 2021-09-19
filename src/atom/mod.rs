@@ -10,6 +10,13 @@ pub enum Atom<'a> {
 }
 
 impl<'a> Atom<'a> {
+    pub fn format(&self) -> String {
+        match self {
+            Atom::Literal(l) => l.format(),
+            Atom::Parameter(p) => p.format(),
+            Atom::Variable(v) => v.to_string(),
+        }
+    }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         if let Ok((input, literal)) = Literal::parse(input) {
             return Ok((input, Atom::Literal(literal)));

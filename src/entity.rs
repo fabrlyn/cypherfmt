@@ -13,6 +13,13 @@ pub enum Entity<'a> {
 }
 
 impl<'a> Entity<'a> {
+
+    pub fn format(&self) -> String {
+        match self {
+            Entity::Node(n) => n.format(),
+            Entity::Relationship(r) => r.format()
+        }
+    }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         match opt(Node::parse)(input)? {
             (input, Some(node)) => return Ok((input, Entity::Node(node))),

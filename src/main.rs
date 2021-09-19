@@ -25,7 +25,7 @@ mod token;
 mod value;
 
 fn main() {
-    let query = "MATCH (n:SomeNode) WHERE n.id IN [1,2,3,4] RETURN n, true as someValue";
+    let query = "MATCH (n:SomeNode) RETURN n";
     let formatted = Cypher::parse(query).unwrap().1;
     println!("{}", formatted.format());
 }

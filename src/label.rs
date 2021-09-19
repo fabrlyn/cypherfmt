@@ -1,10 +1,4 @@
-use nom::{
-    bytes::complete::tag,
-    combinator::map,
-    multi::many1,
-    sequence::{preceded, tuple},
-    IResult,
-};
+use nom::{bytes::complete::tag, combinator::map, multi::many1, sequence::preceded, IResult};
 
 use crate::token;
 
@@ -12,6 +6,9 @@ use crate::token;
 pub struct Label<'a>(pub &'a str);
 
 impl<'a> Label<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
     pub fn parse_one(input: &'a str) -> IResult<&str, Self> {
         map(token::parse, Label)(input)
     }

@@ -4,6 +4,10 @@ use nom::{branch::alt, bytes::complete::tag, combinator::map, IResult};
 pub struct Bool<'a>(pub &'a str);
 
 impl<'a> Bool<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(alt((tag("TRUE"), tag("FALSE"))), Bool)(input)
     }

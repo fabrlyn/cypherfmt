@@ -9,6 +9,10 @@ use crate::projection_body::ProjectionBody;
 pub struct Return<'a>(ProjectionBody<'a>);
 
 impl<'a> Return<'a> {
+    pub fn format(&self) -> String {
+        format!("{}", self.0.format())
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             tuple((tag_no_case("RETURN"), space1, ProjectionBody::parse)),

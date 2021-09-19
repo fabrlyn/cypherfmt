@@ -6,6 +6,17 @@ use crate::entity::Entity;
 pub struct Pattern<'a>(pub Vec<Entity<'a>>);
 
 impl<'a> Pattern<'a> {
+    pub fn format(&self) -> String {
+        format!(
+            "{}",
+            self.0
+                .iter()
+                .map(|e| e.format())
+                .collect::<Vec<_>>()
+                .join(" ")
+        )
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(many1(Entity::parse), Pattern)(input)
     }

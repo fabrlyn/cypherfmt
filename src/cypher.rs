@@ -20,6 +20,13 @@ impl<'a> PartQuery<'a> {
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(SinglePartQuery::parse, PartQuery::Single)(input)
     }
+
+    pub fn format(&self) -> String {
+        match self {
+            PartQuery::Single(single) => single.format(),
+            _ => "".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -68,13 +75,26 @@ impl<'a> Cypher<'a> {
         )(query)
     }
 
+    fn semi_colon_str(&self) -> &str {
+        if self.semicolon {
+            return ";";
+        }
+
+        ""
+    }
+
     pub fn format(&self) -> String {
-        "".to_string()
+        format!(
+            "{}{}",
+            self.queries.iter().next().unwrap().format(),
+            self.semi_colon_str()
+        )
     }
 }
 
 #[cfg(test)]
 mod tests {
+
     #[test]
     fn parse_union() {
         let expected = Ok((" data", "union"));

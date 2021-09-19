@@ -16,6 +16,13 @@ pub enum Double<'a> {
 }
 
 impl<'a> Double<'a> {
+    pub fn format(&self) -> String {
+        match self {
+            Double::Exponent(e) => e.format(),
+            Double::Regular(r) => r.format(),
+        }
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         if let Ok((input, exponent)) = Exponent::parse(input) {
             return Ok((input, Double::Exponent(exponent)));
@@ -48,6 +55,10 @@ mod double_tests {
 pub struct Exponent<'a>(&'a str);
 
 impl<'a> Exponent<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse_segment_0(input: &str) -> IResult<&str, &str> {
         alt((tag("."), recognize(tuple((digit0, tag("."))))))(input)
     }
@@ -89,6 +100,10 @@ mod exponent_tests {
 pub struct Regular<'a>(pub &'a str);
 
 impl<'a> Regular<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             recognize(tuple((optional_signed, digit0, tag("."), digit1))),

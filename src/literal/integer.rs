@@ -17,6 +17,14 @@ pub enum Integer<'a> {
 }
 
 impl<'a> Integer<'a> {
+    pub fn format(&self) -> String {
+        match self {
+            Integer::Decimal(d) => d.format(),
+            Integer::Octal(o) => o.format(),
+            Integer::Hex(h) => h.format(),
+        }
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         if let Ok((input, hex)) = Hex::parse(input) {
             return Ok((input, Integer::Hex(hex)));
@@ -60,6 +68,10 @@ mod integer_tests {
 pub struct Decimal<'a>(pub &'a str);
 
 impl<'a> Decimal<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             recognize(tuple((optional_signed, alt((tag("0"), digit1))))),
@@ -98,6 +110,10 @@ mod decimal_tests {
 pub struct Octal<'a>(&'a str);
 
 impl<'a> Octal<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     fn parse_prefix(input: &str) -> IResult<&str, &str> {
         alt((tag("0o"), tag("0")))(input)
     }
@@ -151,6 +167,10 @@ mod octal_tests {
 pub struct Hex<'a>(&'a str);
 
 impl<'a> Hex<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             recognize(tuple((optional_signed, tag("0x"), hex_digit1))),

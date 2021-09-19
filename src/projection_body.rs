@@ -7,7 +7,7 @@ use nom::{
     IResult,
 };
 
-use crate::{expression::Expression, shared::optional};
+use crate::{expression::Expression, shared::optional, symbolic_name};
 
 #[derive(Debug, PartialEq)]
 pub enum Order {
@@ -24,8 +24,30 @@ pub struct ProjectionItem<'a> {
 }
 
 impl<'a> ProjectionItem<'a> {
+    fn variable_str(&self) -> String {
+        self.variable
+            .map(|v| format!(" AS {}", v))
+            .unwrap_or("".to_string())
+    }
+
+    pub fn format(&self) -> String {
+        format!("{}{}", self.expression.format(), self.variable_str())
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        todo!()
+        let (input, expression) = Expression::parse(input)?;
+        let (input, _) = space1(input)?;
+        let (input, variable) = optional(map(
+            tuple((tag_no_case("AS"), space1, symbolic_name::parse)),
+            |(_, _, variable)| variable,
+        ))(input)?;
+        Ok((
+            input,
+            ProjectionItem {
+                expression,
+                variable,
+            },
+        ))
     }
 }
 
@@ -36,7 +58,7 @@ pub struct SortItem<'a> {
 }
 
 impl<'a> SortItem<'a> {
-    pub fn parse(input: &'a str) -> IResult<&str, Self> {
+    pub fn parse(_input: &'a str) -> IResult<&str, Self> {
         todo!()
     }
 }
@@ -55,7 +77,7 @@ fn parse_distinct<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
     optional(tag_no_case("DISTINCT"))(input)
 }
 
-fn parse_wildcard<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
+fn parse_wild_card<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
     optional(tag("*"))(input)
 }
 
@@ -98,13 +120,51 @@ fn parse_limit_item<'a>(input: &'a str) -> IResult<&'a str, Option<Expression>> 
 }
 
 impl<'a> ProjectionBody<'a> {
+    fn distinct_str(&self) -> String {
+        if self.distinct {
+            return "DISTINCT".to_string();
+        }
+        "".to_string()
+    }
+
+    fn wild_card_str(&self) -> String {
+        if self.wild_card {
+            return "*".to_string();
+        }
+        "".to_string()
+    }
+
+    pub fn format(&self) -> String {
+        format!(
+            "{}{}{}",
+            self.distinct_str(),
+            self.wild_card_str(),
+            self.projection_items
+                .iter()
+                .map(|p| p.format())
+                .collect::<Vec<_>>()
+                .join(" ")
+        )
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, distinct) = parse_distinct(input)?;
-        let (input, wildcard) = parse_wildcard(input)?;
+        let (input, wild_card) = parse_wild_card(input)?;
         let (input, projection_items) = parse_projection_items(input)?;
-        let (input, sort_items) = parse_sort_items(input)?;
-        let (input, skip_item) = parse_skip_item(input)?;
-        let (input, limit_item) = parse_limit_item(input)?;
-        todo!()
+        //let (input, sort_items) = parse_sort_items(input)?;
+        //let (input, skip_item) = parse_skip_item(input)?;
+        //let (input, limit_item) = parse_limit_item(input)?;
+
+        Ok((
+            input,
+            ProjectionBody {
+                distinct: distinct.is_some(),
+                wild_card: wild_card.is_some(),
+                projection_items,
+                sort_expressions: vec![],
+                limit_expression: None,
+                skip_expression: None,
+            },
+        ))
     }
 }

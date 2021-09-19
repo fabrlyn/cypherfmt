@@ -15,6 +15,42 @@ pub struct Node<'a> {
 }
 
 impl<'a> Node<'a> {
+    fn variable_str(&self) -> String {
+        self.variable
+            .map(|v| v.to_string())
+            .unwrap_or("".to_string())
+    }
+
+    fn labels_str(&self) -> String {
+        if self.labels.len() == 0 {
+            return "".to_string();
+        }
+
+        format!(
+            ":{}",
+            self.labels
+                .iter()
+                .map(|l| l.format())
+                .collect::<Vec<_>>()
+                .join(":")
+        )
+    }
+
+    fn properties_str(&self) -> String {
+        self.properties
+            .as_ref()
+            .map(|p| p.format())
+            .unwrap_or("".to_string())
+    }
+
+    pub fn format(&self) -> String {
+        format!(
+            "({}{}{})",
+            self.variable_str(),
+            self.labels_str(),
+            self.properties_str()
+        )
+    }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             delimited(

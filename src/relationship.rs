@@ -17,6 +17,38 @@ pub struct Relationship<'a> {
 }
 
 impl<'a> Relationship<'a> {
+    fn variable_str(&self) -> String {
+        self.variable
+            .map(|v| v.to_string())
+            .unwrap_or("".to_string())
+    }
+
+    fn labels_str(&self) -> String {
+        if self.labels.len() == 0 {
+            return "".to_string();
+        }
+
+        self.labels.iter().map(|l| l.format()).collect()
+    }
+
+    fn properties_str(&self) -> String {
+        self.properties
+            .clone()
+            .map(|p| p.format())
+            .unwrap_or("".to_string())
+    }
+
+    pub fn format(&self) -> String {
+        format!(
+            "{}[{}{}{}]{}",
+            self.right_line.format(),
+            self.variable_str(),
+            self.labels_str(),
+            self.properties_str(),
+            self.left_line.format()
+        )
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, left_line) = Line::parse(input)?;
         let (input, (variable, labels, properties)) = delimited(

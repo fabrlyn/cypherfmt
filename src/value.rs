@@ -1,15 +1,15 @@
 use nom::{
     branch::alt,
-    bytes::complete::{escaped, is_not, tag, take_while1},
+    bytes::complete::{escaped, is_not, take_while1},
     character::complete::one_of,
-    combinator::{map, map_res, recognize},
+    combinator::{map, recognize},
     sequence::delimited,
     IResult,
 };
 
 use crate::shared::{double_qoute, is_alphanumeric, single_qoute};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Value<'a>(pub &'a str);
 
 fn allowed_for_other(c: char) -> bool {
@@ -20,6 +20,10 @@ fn allowed_for_other(c: char) -> bool {
 }
 
 impl<'a> Value<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     fn parse_other(input: &'a str) -> IResult<&str, Self> {
         map(take_while1(allowed_for_other), Value)(input)
     }
@@ -131,6 +135,4 @@ mod tests {
         let actual = Value::parse("-0o1372 data");
         assert_eq!(expected, actual);
     }
-
-
 }

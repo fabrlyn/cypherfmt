@@ -10,6 +10,24 @@ pub struct Match<'a> {
 }
 
 impl<'a> Match<'a> {
+    fn optional_str(&self) -> &str {
+        if self.optional {
+            return "OPTIONAL ";
+        }
+        ""
+    }
+    pub fn format(&self) -> String {
+        format!(
+            "{}MATCH\n{}\n{}\n",
+            self.optional_str(),
+            self.patterns
+                .iter()
+                .map(|p| p.format())
+                .collect::<Vec<_>>()
+                .join(" "),
+            self.r#where.as_ref().map(|w| w.format()).unwrap_or("".to_string())
+        )
+    }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, keyword) = alt((tag("MATCH"), tag("OPTIONAL MATCH")))(input)?;
         let optional = keyword == "OPTIONAL MATCH";

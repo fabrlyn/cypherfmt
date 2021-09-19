@@ -1,10 +1,4 @@
-use nom::{
-    character::complete::space1,
-    combinator::map,
-    multi::{many0, many1},
-    sequence::tuple,
-    IResult,
-};
+use nom::{character::complete::space1, combinator::map, multi::many0, sequence::tuple, IResult};
 
 use crate::{
     clause::{in_query_call::InQueryCall, r#match::Match, unwind::Unwind},
@@ -19,6 +13,13 @@ pub enum ReadingClause<'a> {
 }
 
 impl<'a> ReadingClause<'a> {
+    pub fn format(&self) -> String {
+        match self {
+            ReadingClause::Match(m) => m.format(),
+            _ => "".to_string(),
+        }
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(Match::parse, ReadingClause::Match)(input)
     }
@@ -40,6 +41,13 @@ pub enum ReturnOrMutate<'a> {
 }
 
 impl<'a> ReturnOrMutate<'a> {
+    pub fn format(&self) -> String {
+        match self {
+            ReturnOrMutate::Return(r) => r.format(),
+            _ => "".to_string(),
+        }
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(Return::parse, ReturnOrMutate::Return)(input)
     }
@@ -64,6 +72,17 @@ fn parse_read_parts<'a>(input: &'a str) -> IResult<&str, Vec<ReadingClause<'a>>>
 }
 
 impl<'a> SinglePartQuery<'a> {
+    pub fn format(&self) -> String {
+        let read_parts = self
+            .read_parts
+            .iter()
+            .map(|r| r.format())
+            .collect::<Vec<_>>()
+            .join("\n");
+        let return_or_mutate = self.return_or_mutate.format();
+        format!("{}\n{}\n", read_parts, return_or_mutate)
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, read_parts) = parse_read_parts(input)?;
         let (input, return_or_mutate) = ReturnOrMutate::parse(input)?;

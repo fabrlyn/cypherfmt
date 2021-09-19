@@ -1,6 +1,5 @@
 use nom::{
     bytes::complete::tag,
-    error::{Error, ParseError},
     IResult, Parser,
 };
 

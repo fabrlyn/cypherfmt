@@ -9,6 +9,13 @@ pub enum Number<'a> {
 }
 
 impl<'a> Number<'a> {
+    pub fn format(&self) -> String {
+        match self {
+            Number::Double(d) => d.format(),
+            Number::Integer(i) => i.format(),
+        }
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         if let Ok((input, double)) = Double::parse(input) {
             return Ok((input, Number::Double(double)));

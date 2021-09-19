@@ -9,10 +9,25 @@ use nom::{
 
 use crate::key_value::KeyValue;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Properties<'a>(pub Vec<KeyValue<'a>>);
 
 impl<'a> Properties<'a> {
+    pub fn format(&self) -> String {
+        if self.0.len() == 0 {
+            return "".to_string();
+        }
+
+        format!(
+            "{{{}}}",
+            self.0
+                .iter()
+                .map(|kv| kv.format())
+                .collect::<Vec<_>>()
+                .join(", ")
+        )
+    }
+
     fn parse_key_value(input: &str) -> IResult<&str, KeyValue> {
         map(tuple((space0, KeyValue::parse, space0)), |(_, kv, _)| kv)(input)
     }

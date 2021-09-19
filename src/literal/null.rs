@@ -4,6 +4,10 @@ use nom::{bytes::complete::tag, combinator::map, IResult};
 pub struct Null<'a>(pub &'a str);
 
 impl<'a> Null<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(tag("NULL"), Null)(input)
     }

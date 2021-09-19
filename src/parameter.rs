@@ -1,5 +1,5 @@
 use nom::branch::alt;
-use nom::character::complete::{alpha1, alphanumeric0};
+
 use nom::combinator::recognize;
 use nom::{bytes::complete::tag, combinator::map, sequence::tuple, IResult};
 
@@ -10,6 +10,10 @@ use crate::symbolic_name;
 pub struct Parameter<'a>(pub &'a str);
 
 impl<'a> Parameter<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     fn parse_symbolic_name(input: &str) -> IResult<&str, &str> {
         recognize(tuple((tag("$"), symbolic_name::parse)))(input)
     }

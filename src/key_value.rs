@@ -2,13 +2,16 @@ use nom::{character::complete::space0, combinator::map, sequence::tuple, IResult
 
 use crate::{key::Key, value::Value};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct KeyValue<'a> {
     pub key: Key<'a>,
     pub value: Value<'a>,
 }
 
 impl<'a> KeyValue<'a> {
+    pub fn format(&self) -> String {
+        format!("{}: {}", self.key.format(), self.value.format())
+    }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(
             tuple((Key::parse, space0, Value::parse)),

@@ -4,6 +4,10 @@ use nom::{branch::alt, bytes::complete::tag, combinator::map, IResult};
 pub struct Line<'a>(pub &'a str);
 
 impl<'a> Line<'a> {
+    pub fn format(&self) -> String {
+        self.0.to_string()
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         map(alt((tag("<-"), tag("->"), tag("-"))), Line)(input)
     }
