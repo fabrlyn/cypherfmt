@@ -28,7 +28,7 @@ impl<'a> Where<'a> {
 mod tests {
     use crate::{
         atom::Atom,
-        expression::{CombinableExpression, Expression},
+        expression::{CalculableExpression, CombinableExpression, Expression},
         literal::{bool::Bool, Literal},
     };
 
@@ -40,7 +40,10 @@ mod tests {
             " data",
             Where(vec![Expression {
                 expressions: vec![CombinableExpression {
-                    atom: Atom::Literal(Literal::Bool(Bool(true))),
+                    calculables: vec![CalculableExpression {
+                        atom: Atom::Literal(Literal::Bool(Bool(true))),
+                        ..Default::default()
+                    }],
                     ..Default::default()
                 }],
             }]),

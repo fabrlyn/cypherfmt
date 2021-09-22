@@ -10,6 +10,8 @@ use crate::{
         number::Number,
         Literal,
     },
+    math_op::MathOp,
+    property_lookup::PropertyLookup,
 };
 
 #[derive(Debug, PartialEq)]
@@ -22,12 +24,65 @@ pub enum AddOrSub {
 }
 
 #[derive(Debug, PartialEq)]
+pub enum BoolKeyword {
+    StartsWith,
+    EndsWith,
+    Contains,
+    In,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum NullExpression {
+    IsNull,
+    IsNotNull,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct BoolExpression<'a> {
+    pub keyword: BoolKeyword,
+    pub atom: Atom<'a>,
+    pub property_lookups: Vec<PropertyLookup<'a>>,
+    pub labels: Vec<&'a str>,
+}
+#[derive(Debug, PartialEq)]
+pub enum ListExpression<'a> {
+    Single(Expression<'a>),
+    Dotted((Option<Expression<'a>>, Option<Expression<'a>>)),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum BoolOrListExpression<'a> {
+    Null(NullExpression),
+    Bool(BoolExpression<'a>),
+    List(ListExpression<'a>),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct CalculableExpression<'a> {
+    pub add_or_subs: Vec<AddOrSub>,
+    pub atom: Atom<'a>,
+    pub property_lookups: Vec<PropertyLookup<'a>>,
+    pub labels: Vec<&'a str>,
+    pub math_op: Option<MathOp>,
+}
+
+impl<'a> Default for CalculableExpression<'a> {
+    fn default() -> Self {
+        CalculableExpression {
+            add_or_subs: vec![],
+            atom: Atom::Variable(""),
+            labels: vec![],
+            property_lookups: vec![],
+            math_op: None,
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
 pub struct CombinableExpression<'a> {
     pub not_count: usize,
     pub combinator: Option<Combinator>,
-    pub add_or_subs: Vec<AddOrSub>,
-    pub atom: Atom<'a>,
-    //pub property_lookups: Vec<PropertyLookup<'a>>,
+    pub calculables: Vec<CalculableExpression<'a>>,
 }
 
 impl<'a> Default for CombinableExpression<'a> {
@@ -35,8 +90,7 @@ impl<'a> Default for CombinableExpression<'a> {
         CombinableExpression {
             not_count: 0,
             combinator: None,
-            add_or_subs: vec![],
-            atom: Atom::Variable(""),
+            calculables: vec![],
         }
     }
 }
@@ -78,9 +132,12 @@ impl<'a> Expression<'a> {
     pub fn decimal_int(i: &'a str) -> Self {
         Expression {
             expressions: vec![CombinableExpression {
-                atom: Atom::Literal(Literal::Number(Number::Integer(Integer::Decimal(Decimal(
-                    i,
-                ))))),
+                calculables: vec![CalculableExpression {
+                    atom: Atom::Literal(Literal::Number(Number::Integer(Integer::Decimal(
+                        Decimal(i),
+                    )))),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }],
         }
@@ -89,7 +146,10 @@ impl<'a> Expression<'a> {
     pub fn bool(b: bool) -> Self {
         Expression {
             expressions: vec![CombinableExpression {
-                atom: Atom::Literal(Literal::Bool(Bool(b))),
+                calculables: vec![CalculableExpression {
+                    atom: Atom::Literal(Literal::Bool(Bool(b))),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }],
         }
@@ -99,7 +159,10 @@ impl<'a> Expression<'a> {
         let ints = ints.iter().map(|s| Self::decimal_int(s)).collect();
         Expression {
             expressions: vec![CombinableExpression {
-                atom: Atom::Literal(Literal::List(List(ints))),
+                calculables: vec![CalculableExpression {
+                    atom: Atom::Literal(Literal::List(List(ints))),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }],
         }

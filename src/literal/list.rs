@@ -41,7 +41,7 @@ mod tests {
 
     use crate::{
         atom::Atom,
-        expression::CombinableExpression,
+        expression::{CalculableExpression, CombinableExpression},
         literal::{
             integer::{Decimal, Integer},
             number::Number,
@@ -58,25 +58,34 @@ mod tests {
             List(vec![
                 Expression {
                     expressions: vec![CombinableExpression {
-                        atom: Atom::Literal(Literal::Number(Number::Integer(Integer::Decimal(
-                            Decimal("10"),
-                        )))),
+                        calculables: vec![CalculableExpression {
+                            atom: Atom::Literal(Literal::Number(Number::Integer(
+                                Integer::Decimal(Decimal("10")),
+                            ))),
+                            ..Default::default()
+                        }],
                         ..Default::default()
                     }],
                 },
                 Expression {
                     expressions: vec![CombinableExpression {
-                        atom: Atom::Literal(Literal::Number(Number::Integer(Integer::Decimal(
-                            Decimal("11"),
-                        )))),
+                        calculables: vec![CalculableExpression {
+                            atom: Atom::Literal(Literal::Number(Number::Integer(
+                                Integer::Decimal(Decimal("11")),
+                            ))),
+                            ..Default::default()
+                        }],
                         ..Default::default()
                     }],
                 },
                 Expression {
                     expressions: vec![CombinableExpression {
-                        atom: Atom::Literal(Literal::Number(Number::Integer(Integer::Decimal(
-                            Decimal("12"),
-                        )))),
+                        calculables: vec![CalculableExpression {
+                            atom: Atom::Literal(Literal::Number(Number::Integer(
+                                Integer::Decimal(Decimal("12")),
+                            ))),
+                            ..Default::default()
+                        }],
                         ..Default::default()
                     }],
                 },

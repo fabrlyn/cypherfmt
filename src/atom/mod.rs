@@ -33,7 +33,7 @@ impl<'a> Atom<'a> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        expression::{CombinableExpression, Expression},
+        expression::{CalculableExpression, CombinableExpression, Expression},
         literal::{bool::Bool, list::List},
     };
 
@@ -50,7 +50,10 @@ mod tests {
     fn parse_list_of_bool_literal() {
         let list = Atom::Literal(Literal::List(List(vec![Expression {
             expressions: vec![CombinableExpression {
-                atom: Atom::Literal(Literal::Bool(Bool(true))),
+                calculables: vec![CalculableExpression {
+                    atom: Atom::Literal(Literal::Bool(Bool(true))),
+                    ..Default::default()
+                }],
                 ..Default::default()
             }],
         }])));
