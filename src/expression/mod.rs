@@ -1,3 +1,5 @@
+pub mod null_expression;
+
 use nom::{combinator::map, multi::many1, IResult};
 
 use crate::{
@@ -29,12 +31,6 @@ pub enum BoolKeyword {
     EndsWith,
     Contains,
     In,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum NullExpression {
-    IsNull,
-    IsNotNull,
 }
 
 #[derive(Debug, PartialEq)]
