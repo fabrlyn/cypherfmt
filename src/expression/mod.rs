@@ -1,3 +1,4 @@
+pub mod bool_expression;
 pub mod bool_keyword;
 pub mod null_expression;
 
@@ -17,7 +18,7 @@ use crate::{
     property_lookup::PropertyLookup,
 };
 
-use self::{bool_keyword::BoolKeyword, null_expression::NullExpression};
+use self::{bool_expression::BoolExpression, null_expression::NullExpression};
 
 #[derive(Debug, PartialEq)]
 pub struct Not;
@@ -28,13 +29,6 @@ pub enum AddOrSub {
     Sub,
 }
 
-#[derive(Debug, PartialEq)]
-pub struct BoolExpression<'a> {
-    pub keyword: BoolKeyword,
-    pub atom: Atom<'a>,
-    pub property_lookups: Vec<PropertyLookup<'a>>,
-    pub labels: Vec<&'a str>,
-}
 #[derive(Debug, PartialEq)]
 pub enum ListExpression<'a> {
     Single(Expression<'a>),
@@ -118,7 +112,6 @@ impl<'a> Expression<'a> {
     }
 }
 
-#[cfg(test)]
 impl<'a> Expression<'a> {
     pub fn decimal_int(i: &'a str) -> Self {
         Expression {

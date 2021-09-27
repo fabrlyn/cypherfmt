@@ -70,7 +70,7 @@ impl<'a> Node<'a> {
         map(
             delimited(
                 tag("("),
-                tuple((parse_token, opt(Label::parse), parse_properties)),
+                tuple((parse_token, opt(Label::parse_many1), parse_properties)),
                 tag(")"),
             ),
             |(variable, labels, properties)| Node {
