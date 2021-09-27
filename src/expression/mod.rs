@@ -52,7 +52,6 @@ impl<'a> Expression<'a> {
         map(many1(CombinableExpression::parse), |expressions| {
             Expression { expressions }
         })(input)
-        //map(Atom::parse, Expression)(input)
     }
 }
 

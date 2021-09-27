@@ -24,7 +24,7 @@ impl<'a> Label<'a> {
     }
 
     pub fn parse_many1(input: &'a str) -> IResult<&'a str, Vec<Label<'a>>> {
-        many1(preceded(tuple((space0, tag(":"), space0)), Self::parse))(input)
+        many1(Self::parse)(input)
     }
 }
 
