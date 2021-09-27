@@ -1,3 +1,4 @@
+pub mod bool_keyword;
 pub mod null_expression;
 
 use nom::{combinator::map, multi::many1, IResult};
@@ -16,6 +17,8 @@ use crate::{
     property_lookup::PropertyLookup,
 };
 
+use self::{bool_keyword::BoolKeyword, null_expression::NullExpression};
+
 #[derive(Debug, PartialEq)]
 pub struct Not;
 
@@ -23,14 +26,6 @@ pub struct Not;
 pub enum AddOrSub {
     Add,
     Sub,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum BoolKeyword {
-    StartsWith,
-    EndsWith,
-    Contains,
-    In,
 }
 
 #[derive(Debug, PartialEq)]
