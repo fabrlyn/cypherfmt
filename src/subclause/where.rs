@@ -28,7 +28,10 @@ impl<'a> Where<'a> {
 mod tests {
     use crate::{
         atom::Atom,
-        expression::{CalculableExpression, CombinableExpression, Expression},
+        expression::{
+            calculable_expression::CalculableExpression,
+            combinable_expression::CombinableExpression, Expression,
+        },
         literal::{bool::Bool, Literal},
     };
 

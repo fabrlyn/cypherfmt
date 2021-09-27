@@ -41,7 +41,10 @@ mod tests {
 
     use crate::{
         atom::Atom,
-        expression::{CalculableExpression, CombinableExpression},
+        expression::{
+            calculable_expression::CalculableExpression,
+            combinable_expression::CombinableExpression,
+        },
         literal::{
             integer::{Decimal, Integer},
             number::Number,

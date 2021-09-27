@@ -1,12 +1,15 @@
 pub mod bool_expression;
 pub mod bool_keyword;
+pub mod calculable_expression;
+pub mod combinable_expression;
+pub mod list_expression;
 pub mod null_expression;
 
 use nom::{combinator::map, multi::many1, IResult};
 
 use crate::{
     atom::Atom,
-    combinator::Combinator,
+    expression::calculable_expression::CalculableExpression,
     literal::{
         bool::Bool,
         integer::{Decimal, Integer},
@@ -14,80 +17,21 @@ use crate::{
         number::Number,
         Literal,
     },
-    math_op::MathOp,
-    property_lookup::PropertyLookup,
 };
 
-use self::{bool_expression::BoolExpression, null_expression::NullExpression};
+use self::{
+    bool_expression::BoolExpression, combinable_expression::CombinableExpression,
+    list_expression::ListExpression, null_expression::NullExpression,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct Not;
-
-#[derive(Debug, PartialEq)]
-pub enum AddOrSub {
-    Add,
-    Sub,
-}
-
-#[derive(Debug, PartialEq)]
-pub enum ListExpression<'a> {
-    Single(Expression<'a>),
-    Dotted((Option<Expression<'a>>, Option<Expression<'a>>)),
-}
 
 #[derive(Debug, PartialEq)]
 pub enum BoolOrListExpression<'a> {
     Null(NullExpression),
     Bool(BoolExpression<'a>),
     List(ListExpression<'a>),
-}
-
-#[derive(Debug, PartialEq)]
-pub struct CalculableExpression<'a> {
-    pub add_or_subs: Vec<AddOrSub>,
-    pub atom: Atom<'a>,
-    pub property_lookups: Vec<PropertyLookup<'a>>,
-    pub labels: Vec<&'a str>,
-    pub math_op: Option<MathOp>,
-}
-
-impl<'a> Default for CalculableExpression<'a> {
-    fn default() -> Self {
-        CalculableExpression {
-            add_or_subs: vec![],
-            atom: Atom::Variable(""),
-            labels: vec![],
-            property_lookups: vec![],
-            math_op: None,
-        }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct CombinableExpression<'a> {
-    pub not_count: usize,
-    pub combinator: Option<Combinator>,
-    pub calculables: Vec<CalculableExpression<'a>>,
-}
-
-impl<'a> Default for CombinableExpression<'a> {
-    fn default() -> Self {
-        CombinableExpression {
-            not_count: 0,
-            combinator: None,
-            calculables: vec![],
-        }
-    }
-}
-
-impl<'a> CombinableExpression<'a> {
-    pub fn format(&self) -> String {
-        todo!()
-    }
-
-    pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        todo!()
-    }
 }
 
 #[derive(Debug, PartialEq)]
