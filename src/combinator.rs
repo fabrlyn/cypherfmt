@@ -30,6 +30,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_combinator_
+    fn parse_combinator_or() {
+        let expected = Ok((" data", Combinator::Or));
+        let actual = Combinator::parse("or data");
+        assert_eq!(expected, actual);
+    }
 
+    #[test]
+    fn parse_combinator_and() {
+        let expected = Ok((" data", Combinator::And));
+        let actual = Combinator::parse("and data");
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn parse_combinator_xor() {
+        let expected = Ok((" data", Combinator::Xor));
+        let actual = Combinator::parse("xor data");
+        assert_eq!(expected, actual);
+    }
 }
