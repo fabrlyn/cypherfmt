@@ -40,7 +40,7 @@ mod tests {
     #[test]
     fn parse_where() {
         let expected = Ok((
-            " data",
+            "data",
             Where(vec![Expression {
                 expressions: vec![CombinableExpression {
                     calculables: vec![CalculableExpression {
