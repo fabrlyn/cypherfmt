@@ -24,7 +24,7 @@ mod tests {
 
     #[test]
     fn parse_property_lookup() {
-        let expected = Ok((" data", PropertyLookup(".   someProperty")));
+        let expected = Ok((" data", PropertyLookup("someProperty")));
         let actual = PropertyLookup::parse(".   someProperty data");
         assert_eq!(expected, actual);
     }
