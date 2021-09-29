@@ -1,5 +1,6 @@
 pub mod bool_expression;
 pub mod bool_keyword;
+pub mod bool_or_list_expression;
 pub mod calculable_expression;
 pub mod combinable_expression;
 pub mod list_expression;
@@ -26,13 +27,6 @@ use self::{
 
 #[derive(Debug, PartialEq)]
 pub struct Not;
-
-#[derive(Debug, PartialEq)]
-pub enum BoolOrListExpression<'a> {
-    Null(NullExpression),
-    Bool(BoolExpression<'a>),
-    List(ListExpression<'a>),
-}
 
 #[derive(Debug, PartialEq)]
 pub struct Expression<'a> {
