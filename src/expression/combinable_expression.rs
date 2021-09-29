@@ -35,11 +35,24 @@ impl<'a> CombinableExpression<'a> {
         })(input)
     }
 
-    fn parse_calcualables(input: &'a str) -> IResult<&str, Vec<CalculableExpression<'a>>> {
-        many1(map(
+    fn parse_calculable(input: &'a str) -> IResult<&str, CalculableExpression<'a>> {
+        map(
             tuple((CalculableExpression::parse, space0)),
             |(result, _)| result,
-        ))(input)
+        )(input)
+    }
+
+    fn parse_calcualables(input: &'a str) -> IResult<&str, Vec<CalculableExpression<'a>>> {
+        let (input, calculable) = Self::parse_calculable(input)?;
+        if calculable.math_op.is_none() {
+            return Ok((input, vec![calculable]));
+        }
+
+        let (input, mut calculables_rest) = many1(Self::parse_calculable)(input)?;
+        let mut calculables = vec![calculable];
+        calculables.append(&mut calculables_rest);
+
+        Ok((input, calculables))
     }
 
     pub fn format(&self) -> String {

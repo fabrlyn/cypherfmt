@@ -43,9 +43,20 @@ impl<'a> Expression<'a> {
     }
 
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        map(many1(CombinableExpression::parse), |expressions| {
-            Expression { expressions }
-        })(input)
+        let (input, expression) = CombinableExpression::parse(input)?;
+        if expression.combinator.is_none() {
+            return Ok((
+                input,
+                Expression {
+                    expressions: vec![expression],
+                },
+            ));
+        }
+
+        let mut expressions = vec![expression];
+        let (input, mut expressions_rest) = many1(CombinableExpression::parse)(input)?;
+        expressions.append(&mut expressions_rest);
+        Ok((input, Expression { expressions }))
     }
 }
 

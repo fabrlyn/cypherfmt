@@ -3,7 +3,9 @@ use nom::{
     sequence::tuple, IResult,
 };
 
-use crate::{atom::Atom, label::Label, math_op::MathOp, property_lookup::PropertyLookup, shared::optional};
+use crate::{
+    atom::Atom, label::Label, math_op::MathOp, property_lookup::PropertyLookup, shared::optional,
+};
 
 use super::bool_or_list_expression::BoolOrListExpression;
 
