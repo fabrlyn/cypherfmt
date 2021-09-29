@@ -43,7 +43,14 @@ impl<'a> CombinableExpression<'a> {
     }
 
     pub fn format(&self) -> String {
-        todo!()
+        format!(
+            "{}",
+            self.calculables
+                .iter()
+                .map(|c| c.format())
+                .collect::<Vec<_>>()
+                .join(" ")
+        )
     }
 
     pub fn parse(input: &'a str) -> IResult<&str, Self> {

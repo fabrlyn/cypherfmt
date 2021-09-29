@@ -33,6 +33,10 @@ pub struct CalculableExpression<'a> {
 }
 
 impl<'a> CalculableExpression<'a> {
+    pub fn format(&self) -> String {
+        format!("{}", self.atom.format())
+    }
+
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, add_or_subs) =
             many0(map(tuple((AddOrSub::parse, space0)), |(result, _)| result))(input)?;
