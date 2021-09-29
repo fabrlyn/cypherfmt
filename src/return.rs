@@ -34,7 +34,7 @@ mod tests {
         let list = Expression::list_of_decimal_ints(&["10", "11", "12"]);
 
         let expected = Ok((
-            " data",
+            "data",
             Return(ProjectionBody {
                 distinct: false,
                 wild_card: false,

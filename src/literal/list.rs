@@ -1,6 +1,6 @@
 use nom::{
     bytes::complete::tag,
-    character::complete::{space0, space1},
+    character::complete::space0,
     combinator::map,
     multi::separated_list0,
     sequence::{delimited, tuple},
@@ -41,6 +41,10 @@ mod tests {
 
     use crate::{
         atom::Atom,
+        expression::{
+            calculable_expression::CalculableExpression,
+            combinable_expression::CombinableExpression,
+        },
         literal::{
             integer::{Decimal, Integer},
             number::Number,
@@ -55,15 +59,39 @@ mod tests {
         let expected = Ok((
             " data",
             List(vec![
-                Expression(Atom::Literal(Literal::Number(Number::Integer(
-                    Integer::Decimal(Decimal("10")),
-                )))),
-                Expression(Atom::Literal(Literal::Number(Number::Integer(
-                    Integer::Decimal(Decimal("11")),
-                )))),
-                Expression(Atom::Literal(Literal::Number(Number::Integer(
-                    Integer::Decimal(Decimal("12")),
-                )))),
+                Expression {
+                    expressions: vec![CombinableExpression {
+                        calculables: vec![CalculableExpression {
+                            atom: Atom::Literal(Literal::Number(Number::Integer(
+                                Integer::Decimal(Decimal("10")),
+                            ))),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }],
+                },
+                Expression {
+                    expressions: vec![CombinableExpression {
+                        calculables: vec![CalculableExpression {
+                            atom: Atom::Literal(Literal::Number(Number::Integer(
+                                Integer::Decimal(Decimal("11")),
+                            ))),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }],
+                },
+                Expression {
+                    expressions: vec![CombinableExpression {
+                        calculables: vec![CalculableExpression {
+                            atom: Atom::Literal(Literal::Number(Number::Integer(
+                                Integer::Decimal(Decimal("12")),
+                            ))),
+                            ..Default::default()
+                        }],
+                        ..Default::default()
+                    }],
+                },
             ]),
         ));
 

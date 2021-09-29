@@ -28,7 +28,10 @@ impl<'a> Where<'a> {
 mod tests {
     use crate::{
         atom::Atom,
-        expression::Expression,
+        expression::{
+            calculable_expression::CalculableExpression,
+            combinable_expression::CombinableExpression, Expression,
+        },
         literal::{bool::Bool, Literal},
     };
 
@@ -37,8 +40,16 @@ mod tests {
     #[test]
     fn parse_where() {
         let expected = Ok((
-            " data",
-            Where(vec![Expression(Atom::Literal(Literal::Bool(Bool(true))))]),
+            "data",
+            Where(vec![Expression {
+                expressions: vec![CombinableExpression {
+                    calculables: vec![CalculableExpression {
+                        atom: Atom::Literal(Literal::Bool(Bool(true))),
+                        ..Default::default()
+                    }],
+                    ..Default::default()
+                }],
+            }]),
         ));
         let actual = Where::parse("WHERE TRUE data");
         assert_eq!(expected, actual);

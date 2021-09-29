@@ -32,7 +32,7 @@ mod tests {
     #[test]
     fn parse_key_value() {
         let expected = Ok((
-            " some data",
+            "some data",
             KeyValue {
                 key: "some_key",
                 value: Expression::decimal_int("10"),

@@ -54,7 +54,7 @@ impl<'a> Relationship<'a> {
         let (input, left_line) = Line::parse(input)?;
         let (input, (variable, labels, properties)) = delimited(
             tag("["),
-            tuple((opt(token::parse), opt(Label::parse), opt(Properties::parse))),
+            tuple((opt(token::parse), opt(Label::parse_many1), opt(Properties::parse))),
             tag("]"),
         )(input)?;
         let (input, right_line) = Line::parse(input)?;
