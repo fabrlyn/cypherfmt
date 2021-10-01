@@ -4,6 +4,7 @@ use node::Node;
 use crate::cypher::Cypher;
 
 mod atom;
+mod case;
 mod clause;
 mod combinator;
 mod cypher;

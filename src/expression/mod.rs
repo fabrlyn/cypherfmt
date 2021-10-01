@@ -16,7 +16,7 @@ use crate::{
         integer::{Decimal, Integer},
         list::List,
         number::Number,
-        Literal,
+        string, Literal,
     },
 };
 
@@ -68,6 +68,30 @@ impl<'a> Expression<'a> {
                     atom: Atom::Literal(Literal::Number(Number::Integer(Integer::Decimal(
                         Decimal(i),
                     )))),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }],
+        }
+    }
+
+    pub fn string(i: &'a str) -> Self {
+        Expression {
+            expressions: vec![CombinableExpression {
+                calculables: vec![CalculableExpression {
+                    atom: Atom::Literal(Literal::String(string::String(i))),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }],
+        }
+    }
+
+    pub fn variable(i: &'a str) -> Self {
+        Expression {
+            expressions: vec![CombinableExpression {
+                calculables: vec![CalculableExpression {
+                    atom: Atom::Variable(i),
                     ..Default::default()
                 }],
                 ..Default::default()
