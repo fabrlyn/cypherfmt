@@ -8,7 +8,7 @@
   - number
     - [x] integer
     - [x] double
-  - [ ] string
+  - [x] string
   - [x] list
   - [x] map
 
