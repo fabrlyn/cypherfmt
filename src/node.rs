@@ -6,13 +6,13 @@ use nom::{
     IResult,
 };
 
-use crate::{label::Label, properties::Properties, token};
+use crate::{label::Label, literal::map::Map, token};
 
 #[derive(Debug, PartialEq)]
 pub struct Node<'a> {
     pub variable: Option<&'a str>,
     pub labels: Vec<Label<'a>>,
-    pub properties: Option<Properties<'a>>,
+    pub properties: Option<Map<'a>>,
 }
 
 fn parse_token<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
@@ -22,10 +22,8 @@ fn parse_token<'a>(input: &'a str) -> IResult<&str, Option<&str>> {
     ))(input)
 }
 
-fn parse_properties<'a>(input: &'a str) -> IResult<&str, Option<Properties<'a>>> {
-    map(tuple((opt(Properties::parse), space0)), |(result, _)| {
-        result
-    })(input)
+fn parse_properties<'a>(input: &'a str) -> IResult<&str, Option<Map<'a>>> {
+    map(tuple((opt(Map::parse), space0)), |(result, _)| result)(input)
 }
 
 impl<'a> Node<'a> {
@@ -140,7 +138,7 @@ mod tests {
             Node {
                 variable: None,
                 labels: vec![],
-                properties: Some(Properties(vec![KeyValue {
+                properties: Some(Map(vec![KeyValue {
                     key: "some_key",
                     value: Expression::decimal_int("10"),
                 }])),
@@ -188,7 +186,7 @@ mod tests {
             Node {
                 variable: Some("myVar"),
                 labels: vec![Label("ALabel")],
-                properties: Some(Properties(vec![KeyValue {
+                properties: Some(Map(vec![KeyValue {
                     key: "some_key",
                     value: Expression::decimal_int("10"),
                 }])),

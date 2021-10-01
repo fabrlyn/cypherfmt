@@ -26,7 +26,7 @@ impl<'a> Pattern<'a> {
 mod tests {
     use crate::{
         expression::Expression, key_value::KeyValue, label::Label, line::Line, node::Node,
-        properties::Properties, relationship::Relationship,
+        literal::map::Map, relationship::Relationship,
     };
 
     use super::*;
@@ -39,7 +39,7 @@ mod tests {
                 Entity::Node(Node {
                     variable: Some("var1"),
                     labels: vec![Label("ALabel")],
-                    properties: Some(Properties(vec![KeyValue {
+                    properties: Some(Map(vec![KeyValue {
                         key: "a",
                         value: Expression::decimal_int("10"),
                     }])),
@@ -47,7 +47,7 @@ mod tests {
                 Entity::Relationship(Relationship {
                     variable: Some("rel1"),
                     labels: vec![Label("ARelationship")],
-                    properties: Some(Properties(vec![KeyValue {
+                    properties: Some(Map(vec![KeyValue {
                         key: "r",
                         value: Expression::decimal_int("15"),
                     }])),
@@ -57,7 +57,7 @@ mod tests {
                 Entity::Node(Node {
                     variable: Some("var2"),
                     labels: vec![Label("BLabel")],
-                    properties: Some(Properties(vec![KeyValue {
+                    properties: Some(Map(vec![KeyValue {
                         key: "b",
                         value: Expression::decimal_int("20"),
                     }])),

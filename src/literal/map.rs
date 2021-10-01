@@ -10,9 +10,9 @@ use nom::{
 use crate::key_value::KeyValue;
 
 #[derive(Debug, PartialEq)]
-pub struct Properties<'a>(pub Vec<KeyValue<'a>>);
+pub struct Map<'a>(pub Vec<KeyValue<'a>>);
 
-impl<'a> Properties<'a> {
+impl<'a> Map<'a> {
     pub fn format(&self) -> String {
         if self.0.len() == 0 {
             return "".to_string();
@@ -39,7 +39,7 @@ impl<'a> Properties<'a> {
                 separated_list0(tuple((space0, tag(","), space0)), Self::parse_key_value),
                 tuple((space0, tag("}"))),
             ),
-            Properties,
+            Map,
         )(input)
     }
 }
@@ -51,24 +51,34 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parse_properties_single() {
+    fn format_map() {
+        let expected = "{a: 'abc', b: 10, c: [1, 2, 3]}";
+        let actual = Map::parse("{     a: 'abc', b: 10, c: [1,2,3]    }")
+            .unwrap()
+            .1
+            .format();
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn parse_map_single() {
         let expected = Ok((
             " some data",
-            Properties(vec![KeyValue {
+            Map(vec![KeyValue {
                 key: "some_key",
                 value: Expression::decimal_int("10"),
             }]),
         ));
 
-        let actual = Properties::parse("{ some_key: 10 } some data");
+        let actual = Map::parse("{ some_key: 10 } some data");
         assert_eq!(expected, actual);
     }
 
     #[test]
-    fn parse_properties_multiple() {
+    fn parse_map_multiple() {
         let expected = Ok((
             " some data",
-            Properties(vec![
+            Map(vec![
                 KeyValue {
                     key: "some_key",
                     value: Expression::decimal_int("10"),
@@ -80,7 +90,7 @@ mod tests {
             ]),
         ));
 
-        let actual = Properties::parse("{ some_key: 10, some_other: false } some data");
+        let actual = Map::parse("{ some_key: 10, some_other: false } some data");
         assert_eq!(expected, actual);
     }
 }

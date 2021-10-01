@@ -18,7 +18,6 @@ mod node;
 mod parameter;
 mod pattern;
 mod projection_body;
-mod properties;
 mod property_lookup;
 mod relationship;
 mod r#return;
@@ -65,8 +64,8 @@ fn node_literal() {
 }
 
 fn main() {
-    //basic_query();
-    basic_limit_query();
+    basic_query();
+    //basic_limit_query();
     //list_literal();
     //properties_literal();
     //node_literal();

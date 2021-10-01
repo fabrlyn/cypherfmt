@@ -5,13 +5,13 @@ use nom::{
     IResult,
 };
 
-use crate::{label::Label, line::Line, properties::Properties, token};
+use crate::{label::Label, line::Line, literal::map::Map, token};
 
 #[derive(Debug, PartialEq)]
 pub struct Relationship<'a> {
     pub variable: Option<&'a str>,
     pub labels: Vec<Label<'a>>,
-    pub properties: Option<Properties<'a>>,
+    pub properties: Option<Map<'a>>,
     pub right_line: Line<'a>,
     pub left_line: Line<'a>,
 }
@@ -54,7 +54,7 @@ impl<'a> Relationship<'a> {
         let (input, left_line) = Line::parse(input)?;
         let (input, (variable, labels, properties)) = delimited(
             tag("["),
-            tuple((opt(token::parse), opt(Label::parse_many1), opt(Properties::parse))),
+            tuple((opt(token::parse), opt(Label::parse_many1), opt(Map::parse))),
             tag("]"),
         )(input)?;
         let (input, right_line) = Line::parse(input)?;
@@ -136,7 +136,7 @@ mod tests {
             Relationship {
                 variable: None,
                 labels: vec![],
-                properties: Some(Properties(vec![KeyValue {
+                properties: Some(Map(vec![KeyValue {
                     key: "some_key",
                     value: Expression::decimal_int("10"),
                 }])),
@@ -190,7 +190,7 @@ mod tests {
             Relationship {
                 variable: Some("myVar"),
                 labels: vec![Label("ALabel")],
-                properties: Some(Properties(vec![KeyValue {
+                properties: Some(Map(vec![KeyValue {
                     key: "some_key",
                     value: Expression::decimal_int("10"),
                 }])),
