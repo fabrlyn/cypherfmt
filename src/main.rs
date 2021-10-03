@@ -4,6 +4,7 @@ use node::Node;
 use crate::cypher::Cypher;
 
 mod atom;
+mod filter_expression;
 mod case;
 mod clause;
 mod count;

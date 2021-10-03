@@ -14,6 +14,7 @@
   - [x] parameter
   - [x] case
   - [x] count
+  - [x] filter expression
   - [ ] filter
   - [ ] pattern comprehension
   - [ ] all
