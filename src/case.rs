@@ -55,6 +55,28 @@ impl<'a> Case<'a> {
             },
         ))
     }
+
+    pub fn format(&self) -> String {
+        let case_expression = match &self.case_expression {
+            Some(expression) => format!("CASE {}\n", expression.format()),
+            None => format!("CASE\n"),
+        };
+
+        let cases = self
+            .cases
+            .iter()
+            .map(|(when_exp, then_exp)| {
+                format!("WHEN {} THEN {}\n", when_exp.format(), then_exp.format())
+            })
+            .collect::<String>();
+
+        let end_case = match &self.else_expression {
+            Some(exp) => format!("ELSE {}\n", exp.format()),
+            None => "".to_string(),
+        };
+
+        format!("{}{}{}END\n", case_expression, cases, end_case)
+    }
 }
 
 #[cfg(test)]
@@ -74,5 +96,11 @@ mod tests {
 
         let actual = Case::parse("CASE someVar WHEN 'abc' THEN TRUE END data");
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn format_case() {
+        let formatted = Case::parse("CASE $someVar WHEN true THEN 10 ELSE 20 END").unwrap().1.format();
+        println!("{}", formatted);
     }
 }

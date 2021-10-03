@@ -65,7 +65,7 @@ fn node_literal() {
 }
 
 fn main() {
-    basic_query();
+    //basic_query();
     //basic_limit_query();
     //list_literal();
     //properties_literal();
