@@ -12,8 +12,8 @@
     - [x] list
     - [x] map
   - [x] parameter
-  - [ ] case
-  - [ ] count
+  - [x] case
+  - [x] count
   - [ ] filter
   - [ ] pattern comprehension
   - [ ] all

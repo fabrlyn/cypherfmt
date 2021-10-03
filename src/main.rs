@@ -6,6 +6,7 @@ use crate::cypher::Cypher;
 mod atom;
 mod case;
 mod clause;
+mod count;
 mod combinator;
 mod cypher;
 mod entity;
