@@ -15,7 +15,7 @@
   - [x] case
   - [x] count
   - [x] filter expression
-  - [ ] filter
+  - [x] list comprehension
   - [ ] pattern comprehension
   - [ ] all
   - [ ] any

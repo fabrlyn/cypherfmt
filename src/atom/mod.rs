@@ -1,4 +1,5 @@
 use nom::{combinator::map, IResult};
+pub mod list_comprehension;
 
 use crate::{literal::Literal, parameter::Parameter, symbolic_name};
 
