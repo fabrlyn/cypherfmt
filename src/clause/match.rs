@@ -1,5 +1,10 @@
+use nom::bytes::complete::tag_no_case;
+use nom::character::complete::space1;
+use nom::combinator::map;
+use nom::sequence::tuple;
 use nom::{branch::alt, bytes::complete::tag, character::complete::space0, IResult};
 
+use crate::shared::optional;
 use crate::{pattern::Pattern, subclause::r#where::Where};
 
 #[derive(Debug, PartialEq)]
@@ -25,19 +30,25 @@ impl<'a> Match<'a> {
                 .map(|p| p.format())
                 .collect::<Vec<_>>()
                 .join(" "),
-            self.r#where.as_ref().map(|w| w.format()).unwrap_or("".to_string())
+            self.r#where
+                .as_ref()
+                .map(|w| w.format())
+                .unwrap_or("".to_string())
         )
     }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        let (input, keyword) = alt((tag("MATCH"), tag("OPTIONAL MATCH")))(input)?;
-        let optional = keyword == "OPTIONAL MATCH";
+        let (input, keyword) = alt((tag_no_case("MATCH"), tag_no_case("OPTIONAL MATCH")))(input)?;
+        let optional_match = keyword.to_uppercase() == "OPTIONAL MATCH";
         let (input, _) = space0(input)?;
         let (input, pattern) = Pattern::parse(input)?;
+
+        let (input, r#where) =
+            optional(map(tuple((space1, Where::parse)), |(_, result)| result))(input)?;
 
         Ok((
             input,
             Match {
-                optional,
+                optional: optional_match,
                 patterns: vec![pattern],
                 r#where: None,
             },
@@ -54,7 +65,7 @@ mod tests {
     #[test]
     fn parse_match() {
         let expected = Ok((
-            " data",
+            "data",
             Match {
                 optional: false,
                 patterns: vec![Pattern(vec![Entity::Node(Node {
@@ -73,7 +84,7 @@ mod tests {
     #[test]
     fn parse_match_optional() {
         let expected = Ok((
-            " data",
+            "data",
             Match {
                 optional: true,
                 patterns: vec![Pattern(vec![Entity::Node(Node {

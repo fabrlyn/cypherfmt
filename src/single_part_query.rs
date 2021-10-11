@@ -85,6 +85,7 @@ impl<'a> SinglePartQuery<'a> {
 
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
         let (input, read_parts) = parse_read_parts(input)?;
+
         let (input, return_or_mutate) = ReturnOrMutate::parse(input)?;
 
         Ok((

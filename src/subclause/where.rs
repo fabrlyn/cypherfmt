@@ -1,3 +1,4 @@
+use nom::bytes::complete::tag_no_case;
 use nom::{bytes::complete::tag, character::complete::space1, IResult};
 
 use crate::expression::Expression;
@@ -17,7 +18,7 @@ impl<'a> Where<'a> {
         )
     }
     pub fn parse(input: &'a str) -> IResult<&str, Self> {
-        let (input, _) = tag("WHERE")(input)?;
+        let (input, _) = tag_no_case("WHERE")(input)?;
         let (input, _) = space1(input)?;
         let (input, expression) = Expression::parse(input)?;
         Ok((input, Where(vec![expression])))

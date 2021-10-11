@@ -65,15 +65,15 @@ pub struct Cypher<'a> {
 }
 
 impl<'a> Cypher<'a> {
-    pub fn parse(query: &'a str) -> IResult<&str, Self> {
-        let (query, _) = space0(query)?;
+    pub fn parse(input: &'a str) -> IResult<&str, Self> {
+        let (input, _) = space0(input)?;
         map(
             tuple((many1(PartQuery::parse), optional(tag(";")))),
             |(queries, semicolon)| Cypher {
                 queries,
                 semicolon: semicolon.is_some(),
             },
-        )(query)
+        )(input)
     }
 
     fn semi_colon_str(&self) -> &str {

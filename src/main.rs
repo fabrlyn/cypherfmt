@@ -1,23 +1,27 @@
+use std::env::args;
+use std::io::{self, Read};
+
 use expression::Expression;
 use node::Node;
 
 use crate::cypher::Cypher;
 
 mod atom;
-mod filter_expression;
 mod case;
 mod clause;
-mod count;
 mod combinator;
+mod count;
 mod cypher;
 mod entity;
 mod expression;
+mod filter_expression;
 mod key_value;
 mod label;
 mod line;
 mod literal;
 mod math_op;
 mod node;
+mod output_writer;
 mod parameter;
 mod pattern;
 mod projection_body;
@@ -32,7 +36,7 @@ mod token;
 mod value;
 
 fn basic_limit_query() {
-    let query = " MATCH (p:Person) RETURN p LIMIT 1 ";
+    let query = " MATCH (p:Person) RETURN p";
     let formatted = Cypher::parse(query).unwrap().1.format();
     println!("{}", formatted);
 }
@@ -67,9 +71,12 @@ fn node_literal() {
 }
 
 fn main() {
-    //basic_query();
-    //basic_limit_query();
-    //list_literal();
-    //properties_literal();
-    //node_literal();
+    /*
+    let mut buffer = String::new();
+    io::stdin().read_to_string(&mut buffer).unwrap();
+    println!("{}", buffer);
+    let formatted = Cypher::parse(&buffer).unwrap().1.format();
+    println!("{}", formatted);
+    */
+    basic_limit_query();
 }
